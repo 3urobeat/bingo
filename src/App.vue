@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 27.07.2023 16:18:14
+ * Last Modified: 27.07.2023 17:30:21
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -19,11 +19,10 @@
 
 
 <template>
-    <div class="wrapper">
-        <Navbar></Navbar>
-        <div class="w-full">
-            <GreetingsPage></GreetingsPage>
-        </div>
+    <div class="wrapper container mx-auto flex flex-col">
+        <Navbar class="min-h-[5vh]"></Navbar>
+
+        <GreetingsPage class="h-full"></GreetingsPage>
     </div>
 </template>
 
@@ -34,7 +33,9 @@
 
 <style scoped>
     .wrapper {
-        width: 100%;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
         background-color: white; /* rgb(25, 128, 0); */
     }
 </style>

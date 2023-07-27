@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:25:00
  * Author: 3urobeat
  * 
- * Last Modified: 27.07.2023 16:47:19
+ * Last Modified: 27.07.2023 17:30:26
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,7 +18,7 @@
 
 
 <template>
-    <div class="nav-wrapper">
+    <div class="nav-wrapper relative">
 
         <!-- Centered Image -->
         <div class="img-wrapper">
@@ -26,10 +26,12 @@
         </div>
 
         <!-- Language Dropdown -->
-        <select class="lang-dropdown"> <!-- TODO: Read dynamically from lang folder -->
-            <option value="lang-english">🇬🇧 English</option>
-            <option value="lang-german">🇩🇪 Deutsch</option>
-        </select>
+        <div class="flex absolute w-full inset-0 justify-end p-1.5">
+            <select class="px-1 mr-1"> <!-- TODO: Read dynamically from lang folder -->
+                <option value="lang-english">🇬🇧 English</option>
+                <option value="lang-german">🇩🇪 Deutsch</option>
+            </select>
+        </div>
 
     </div>
 </template>
@@ -44,7 +46,7 @@
     .nav-wrapper { 
         height: 7lvh;
         width:  100%;
-        background-color: rgb(155, 155, 155); /* rgb(25, 128, 0); */
+        @apply bg-background;
 
         border-style: solid;
         border-width: 3px;
@@ -58,14 +60,9 @@
     .img-wrapper {
         width:  100%;
         height: 60%;
-        background-color: rgb(155, 155, 155); /* rgb(25, 128, 0); */
+        @apply bg-background;
 
         display:         flex;
         justify-content: center;
-    }
-
-    .lang-dropdown { /* TODO: Fix dropdown un-centering logo */
-        padding-right: 10px;
-        margin-right: 5px;
     }
 </style>

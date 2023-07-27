@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 27.07.2023 16:18:58
+ * Last Modified: 27.07.2023 17:31:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,3 +17,29 @@
 -->
 
 
+<template>
+    <div class="greetings-wrapper">
+    </div>
+</template>
+
+<script>
+    export default {
+        
+    }
+</script>
+
+<style>
+    .greetings-wrapper {
+        width: 100%;
+        @apply bg-background;
+
+        border-style: solid;
+        border-width: 3px;
+        border-top:   0; /* Navbar already renders a bottom border */
+        border-color: black;
+
+        display:         flex;
+        justify-content: center;
+        align-items:     center;
+    }
+</style>
