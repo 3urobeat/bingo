@@ -5,6 +5,7 @@ module.exports = {
         extend: {
             colors: {
                 background: "rgb(184, 184, 184)",
+                playbtn: "rgb(0, 185, 99)"
             }
         },
     },

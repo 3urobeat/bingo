@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 27.07.2023 18:29:45
+ * Last Modified: 27.07.2023 19:25:45
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,7 @@
         <div class="greetings-new-name">
             <a>Dein Name:</a>
             <input type="text" class="rounded-l">
-            <button class="greetings-new-name-play rounded-xl px-3" id="greetings-new-name-play">Play!</button>
+            <button class="greetings-new-name-play rounded-xl px-3">Play!</button>
         </div>
 
         <div class="greetings-existing-name">
@@ -34,11 +34,13 @@
     </div>
 </template>
 
+
 <script>
     export default {
-        
+
     }
 </script>
+
 
 <style>
     .greetings-wrapper {
@@ -70,7 +72,7 @@
     .greetings-new-name { grid-area: name-input; }
 
     .greetings-new-name-play {
-        background-color: lime;
+        @apply bg-playbtn;
         margin-top: 10px;
     }
     
