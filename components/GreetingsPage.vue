@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 17:56:17
+ * Last Modified: 28.07.2023 18:58:15
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -68,6 +68,36 @@
         })
     });
 
+
+    /**
+     * Starts a game by hiding the Greetings page and showing the Bingo page
+     * @param selectedName The name selected by the user
+     * @param lastActivity If an existing name, the lastActivity timestamp from the database
+     */
+    function startGame(selectedName: string, lastActivity: { lastActivity: number, isInactive: number }) {
+        // Check if we are allowed to choose this name
+        showExistingNameError.value = !lastActivity.isInactive;
+
+        if (!lastActivity.isInactive) return; // ...if not, abort
+
+        // Update lastActivity in database, store name in localstorage and show bingo page
+        useFetch("/api/set-lastactivity", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: selectedName
+            })
+        });
+
+        localStorage.selectedName = selectedName;
+        localStorage.lastActivity = Date.now();
+
+        document.getElementById("greetings-page-component").style = "display:none";
+        document.getElementById("bingo-page-component").style     = "";
+    };
+
     /**
      * Function which gets called when the user presses the play button
      * @param event DOM Button Click event
@@ -84,9 +114,13 @@
             })
         });
 
-        // Check if the name was accepted and display error div if not
+        // Display error div if name was not accepted
         showNewNameError.value = res.data.value == "false";
-    }
+
+        if (showNewNameError.value) return; // ...and abort
+
+        startGame(nameinput.value, { lastActivity: 0, isInactive: true })
+    };
 
     /**
      * Function which gets called when the user selects an existing name
@@ -110,26 +144,8 @@
 
         console.log("User selected existing name '" + event.target.innerHTML + "' which is " + (lastActivity.isInactive ? "available." : "not available!"))
 
-        // Check if we are allowed to choose this name
-        showExistingNameError.value = !lastActivity.isInactive;
-
-        if (!lastActivity.isInactive) return; // ...if not, abort
-
-
-        // Update lastActivity in database, store name in localstorage and show bingo page
-        useFetch("/api/set-lastactivity", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: selectedName
-            })
-        });
-
-        localStorage.selectedName = selectedName;
-        localStorage.lastActivity = Date.now();
-    }
+        startGame(selectedName, lastActivity);
+    };
 </script>
 
 
