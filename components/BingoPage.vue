@@ -18,7 +18,7 @@
 
 
 <template>
-    <div class="bingo-wrapper">
+    <div class="bingo-wrapper flex self-center justify-center items-center">
         <div class="bingo-header-wrapper">
             <a>Name</a>
             <br />

@@ -50,7 +50,24 @@
     import logosrc from "./assets/logo.svg";
     import GreetingsPage from "./components/GreetingsPage.vue";
     import Navbar from "./components/Navbar.vue";
+    import BingoPage from "./components/BingoPage.vue";
 
+
+    /**
+     * Executed on page load
+     */
+    onBeforeMount(() => {
+        // Check if user has a active "login" and instantly hide greetings page
+        const selectedName = localStorage.getItem("selectedName");
+        const lastActivity = localStorage.getItem("lastActivity") || 0;
+
+        if (selectedName && Date.now() - Number(lastActivity) < 1.8e+6) {
+            console.log("User has an active login, instantly showing bingo page...");
+
+            document.getElementById("greetings-page-component").style = "display:none";
+            document.getElementById("bingo-page-component").style     = "";
+        }
+    });
 
     
     /**
