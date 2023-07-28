@@ -23,12 +23,15 @@
         <Navbar class="min-h-[5vh]"></Navbar>
 
         <GreetingsPage class="h-full"></GreetingsPage>
+
+        <BingoPage class="h-full"></BingoPage>
     </div>
 </template>
 
 <script setup lang="js">
     import GreetingsPage from "./components/GreetingsPage.vue";
     import Navbar from "./components/Navbar.vue";
+    import BingoPage from "./components/BingoPage.vue";
 </script>
 
 <style scoped>
