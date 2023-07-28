@@ -43,6 +43,7 @@
 <script setup lang="js">
     import GreetingsPage from "./components/GreetingsPage.vue";
     import Navbar from "./components/Navbar.vue";
+
     import logosrc from "./assets/logo.svg";
     function clickGithub(event) {
       window.open('http://github.com/3urobeat/bingo', '_blank');
