@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:59:02
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 10:51:44
+ * Last Modified: 28.07.2023 12:53:37
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -21,16 +21,22 @@ import { UpdateObserver } from "../updateObserver";
 
 // This function is executed when this API route is called
 export default defineEventHandler(async (event) => {
+    // Get database instance
     const db = useDatabase();
 
+    // Read body of the request we received
     const params = await readBody(event);
 
-    console.log("Received: " + params.name)
+    console.log(`API set-name: Received new name '${params.name}'`);
 
     if (params.name) {
+        // TODO: Check for invalid names
+
+        // Upsert new database record
         await db.updateAsync({ name: params.name }, { $set: { name: params.name, lastActivity: Date.now(), playfield: {} } }, { upsert: true });
 
-        UpdateObserver.getInstance().callSubscribers(); // Update every name subscriber
+        // Update every name subscriber
+        UpdateObserver.getInstance().callSubscribers();
 
         return true;
     }

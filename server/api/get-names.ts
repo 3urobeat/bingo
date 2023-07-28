@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 12:06:10
+ * Last Modified: 28.07.2023 14:30:15
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -21,17 +21,19 @@ import { UpdateObserver } from "../updateObserver";
 
 // This function is executed when this API route is called
 export default defineEventHandler(async (event) => {
-    // Make this a stream
+    // Make this a stream to update each client's names list when the DB changes
     const res = event.node.res;
 
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Connection", "keep-alive");
+    setHeader(event, 'cache-control', 'no-cache')
+    setHeader(event, 'connection', 'keep-alive')
+    setHeader(event, 'content-type', 'text/event-stream')
+    setResponseStatus(event, 200)
 
     event.node.res.flushHeaders();
 
-    // Update
+    /**
+     * Updates the names list with database content
+     */
     const updateClient = async () => {
         // Load DB
         const db = useDatabase();
@@ -47,14 +49,16 @@ export default defineEventHandler(async (event) => {
         res.write(`data: ${JSON.stringify(filtered)}\n\n`);
     }
 
-    // Register this update function
+    // Subscribe this update function to our update observer
     const index = UpdateObserver.getInstance().addSubscriber(updateClient);
 
-    updateClient(); // Update once
+    // Update once on load
+    updateClient();
 
-    res.on("close", () => { // TODO: Call deleteSubscriber
-        
-    })
+    // Listen for connection close and clean up
+    event.node.req.on("close", () => {
+        UpdateObserver.getInstance().deleteSubscriber(index);
+    });
 
     event._handled = true;
 });

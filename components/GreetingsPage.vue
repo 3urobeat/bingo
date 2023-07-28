@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 12:14:30
+ * Last Modified: 28.07.2023 14:30:04
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -49,7 +49,7 @@
     const showError = ref(false);
 
     // Get an event stream to update the names list on change
-    let eventStream;
+    let eventStream: EventSource;
 
     onMounted(() => {
         eventStream = new EventSource("/api/get-names");
@@ -57,6 +57,11 @@
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know and update the list
             names.value = JSON.parse(msg.data.split(" ").pop());
+        })
+
+        // Clean up when the page is unmounted
+        onUnmounted(() => {
+            eventStream.close();
         })
     });
 
@@ -76,7 +81,7 @@
             })
         });
 
-        // Check if the name was accepted
+        // Check if the name was accepted and display error div if not
         showError.value = res.data.value == "false";
     }
 </script>
@@ -103,9 +108,9 @@
         gap: 0px 0px;
         grid-auto-flow: row;
         grid-template-areas:
-            ". . ."
             ". name-input ."
             ". existing-names ."
+            ". . ."
             ". . .";
     }
 
