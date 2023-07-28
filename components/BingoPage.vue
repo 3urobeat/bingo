@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 15:35:45
+ * Last Modified: 28.07.2023 17:55:35
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -68,18 +68,6 @@
 
 <style>
     .bingo-wrapper {
-        width: 100%;
-        @apply bg-background;
-
-        border-style: solid;
-        border-width: 3px;
-        border-top:   0; /* Navbar already renders a bottom border */
-        border-color: black;
-
-        display:         flex;
-        justify-content: center;
-        align-items:     center;
-
         display: grid;
         grid-auto-flow: row;
         grid-template-columns: 1fr 1fr 1fr;

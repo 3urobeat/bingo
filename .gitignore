@@ -23,3 +23,4 @@ logs
 !.env.example
 
 bingo.code-workspace
+server/data/database.db
