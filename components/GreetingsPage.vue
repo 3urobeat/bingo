@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 14:30:04
+ * Last Modified: 28.07.2023 17:56:17
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -26,15 +26,16 @@
             <br />
             <button @click="play" class="greetings-new-name-play rounded-xl px-3">Play!</button>
             <br />
-            <div class="greetings-new-name-error" v-if="showError">Error!</div>
+            <div class="greetings-new-name-error" v-if="showNewNameError">Error!</div>
         </div>
 
         <div class="greetings-existing-name">
             <a>...oder wähle einen aus:</a>
             <br />
             <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-l">
-                <li v-for="thisname in names" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
+                <li v-for="thisname in names" @click="selectExistingName" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
+            <div class="greetings-existing-name-error" v-if="showExistingNameError">Error!</div>
         </div>
     </div>
 </template>
@@ -43,10 +44,12 @@
 <script setup lang="ts">
     import { useFetch } from '@vueuse/core'
 
-    // Get our nameinput input
+    // Get refs to various elements
     const nameinput = ref("");
     const names: Ref<any[]> = ref([]);
-    const showError = ref(false);
+    const showNewNameError = ref(false);
+    const showExistingNameError = ref(false);
+
 
     // Get an event stream to update the names list on change
     let eventStream: EventSource;
@@ -82,7 +85,50 @@
         });
 
         // Check if the name was accepted and display error div if not
-        showError.value = res.data.value == "false";
+        showNewNameError.value = res.data.value == "false";
+    }
+
+    /**
+     * Function which gets called when the user selects an existing name
+     * @param event DOM Button Click event
+     */
+    async function selectExistingName(event: Event) {
+        const selectedName = event.target.innerHTML;
+
+        // Check if name is currently in use
+        const res = await useFetch("/api/get-lastactivity", { // TODO: Stupid that this is a POST
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: selectedName
+            })
+        });
+
+        const lastActivity = JSON.parse(res.data.value);
+
+        console.log("User selected existing name '" + event.target.innerHTML + "' which is " + (lastActivity.isInactive ? "available." : "not available!"))
+
+        // Check if we are allowed to choose this name
+        showExistingNameError.value = !lastActivity.isInactive;
+
+        if (!lastActivity.isInactive) return; // ...if not, abort
+
+
+        // Update lastActivity in database, store name in localstorage and show bingo page
+        useFetch("/api/set-lastactivity", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: selectedName
+            })
+        });
+
+        localStorage.selectedName = selectedName;
+        localStorage.lastActivity = Date.now();
     }
 </script>
 
@@ -93,7 +139,7 @@
         grid-auto-flow: row;
         grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr 1fr 1fr 1fr;
-        gap: 0px 0px;
+        gap: 10px;
         grid-auto-flow: row;
         grid-template-areas:
             ". name-input ."
