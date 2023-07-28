@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 27.07.2023 19:25:45
+ * Last Modified: 28.07.2023 12:14:30
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -21,23 +21,63 @@
     <div class="greetings-wrapper">
         <div class="greetings-new-name">
             <a>Dein Name:</a>
-            <input type="text" class="rounded-l">
-            <button class="greetings-new-name-play rounded-xl px-3">Play!</button>
+            <br />
+            <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-l">
+            <br />
+            <button @click="play" class="greetings-new-name-play rounded-xl px-3">Play!</button>
+            <br />
+            <div class="greetings-new-name-error" v-if="showError">Error!</div>
         </div>
 
         <div class="greetings-existing-name">
             <a>...oder wähle einen aus:</a>
-            <ul class="greetings-existing-names-list rounded-l">
-                <a class="name1" href="">test</a>
+            <br />
+            <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-l">
+                <li v-for="thisname in names" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
         </div>
     </div>
 </template>
 
 
-<script>
-    export default {
+<script setup lang="ts">
+    import { useFetch } from '@vueuse/core'
 
+    // Get our nameinput input
+    const nameinput = ref("");
+    const names: Ref<any[]> = ref([]);
+    const showError = ref(false);
+
+    // Get an event stream to update the names list on change
+    let eventStream;
+
+    onMounted(() => {
+        eventStream = new EventSource("/api/get-names");
+
+        eventStream.addEventListener("message", (msg) => {
+            // Get a list of all names we currently know and update the list
+            names.value = JSON.parse(msg.data.split(" ").pop());
+        })
+    });
+
+    /**
+     * Function which gets called when the user presses the play button
+     * @param event DOM Button Click event
+     */
+    async function play(event: Event) {
+        // Post our data and await a response
+        const res = await useFetch("/api/set-name", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: nameinput.value
+            })
+        });
+
+        // Check if the name was accepted
+        showError.value = res.data.value == "false";
     }
 </script>
 
@@ -84,7 +124,7 @@
         border-color: black;
     }
 
-    a.name1:before {
+    li:before {
         width: 21px;
         /* height: 21px; */
         display: inline-block;

@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  * 
- * Last Modified: 27.07.2023 22:42:55
+ * Last Modified: 28.07.2023 12:06:10
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,19 +16,45 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+import { UpdateObserver } from "../updateObserver";
 
 
 // This function is executed when this API route is called
 export default defineEventHandler(async (event) => {
-    const db = useDatabase();
+    // Make this a stream
+    const res = event.node.res;
 
-    // Get all records
-    let data = await db.findAsync({ });
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Connection", "keep-alive");
 
-    // Remove playfield from response to keep transmitted data size relatively small
-    let filtered = data.map((e) => {
-        return { name: e.name, lastActivity: e.lastActivity }
-    });
+    event.node.res.flushHeaders();
 
-    return filtered;
+    // Update
+    const updateClient = async () => {
+        // Load DB
+        const db = useDatabase();
+
+        // Get all records
+        let data = await db.findAsync({ });
+
+        // Remove playfield from response to keep transmitted data size relatively small
+        const filtered = data.map((e) => {
+            return { name: e.name, lastActivity: e.lastActivity };
+        });
+
+        res.write(`data: ${JSON.stringify(filtered)}\n\n`);
+    }
+
+    // Register this update function
+    const index = UpdateObserver.getInstance().addSubscriber(updateClient);
+
+    updateClient(); // Update once
+
+    res.on("close", () => { // TODO: Call deleteSubscriber
+        
+    })
+
+    event._handled = true;
 });
