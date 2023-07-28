@@ -18,7 +18,7 @@
 
 
 <template>
-    <div class="greetings-wrapper">
+    <div class="greetings-wrapper flex self-center justify-center items-center">
         <div class="greetings-new-name">
             <a>Dein Name:</a>
             <br />
@@ -89,18 +89,6 @@
 
 <style>
     .greetings-wrapper {
-        width: 100%;
-        @apply bg-background;
-
-        border-style: solid;
-        border-width: 3px;
-        border-top:   0; /* Navbar already renders a bottom border */
-        border-color: black;
-
-        display:         flex;
-        justify-content: center;
-        align-items:     center;
-
         display: grid;
         grid-auto-flow: row;
         grid-template-columns: 1fr 1fr 1fr;

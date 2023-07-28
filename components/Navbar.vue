@@ -26,8 +26,8 @@
         </div>
 
         <!-- Language Dropdown -->
-        <div class="flex absolute w-full inset-0 justify-end p-1.5">
-            <select class="px-1 mr-1"> <!-- TODO: Read dynamically from lang folder -->
+        <div class="flex absolute inset-0 justify-end p-1.5">
+            <select class="rounded-l px-1 mr-1 hover:bg-green-800 hover:text-green-600 hover:rounded-2xl transform"> <!-- TODO: Read dynamically from lang folder -->
                 <option value="lang-english">🇬🇧 English</option>
                 <option value="lang-german">🇩🇪 Deutsch</option>
             </select>
