@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:45:36
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 10:56:39
+ * Last Modified: 28.07.2023 12:45:09
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,8 +16,9 @@
 
 
 export class UpdateObserver {
-    private subscribers: Function[];
+    private subscribers: {[key: string]: Function};
 
+    // Provide a getInstance() function to make this class a singleton
     static Instance: UpdateObserver;
 
     static getInstance() {
@@ -30,7 +31,7 @@ export class UpdateObserver {
     }
 
     constructor() {
-        this.subscribers = []
+        this.subscribers = {};
     }
 
     /**
@@ -39,24 +40,34 @@ export class UpdateObserver {
      * @returns 
      */
     addSubscriber(subscriber: Function) {
-        this.subscribers.push(subscriber);
+        const currentIndex = Object.values(this.subscribers).length - 1;
 
-        return this.subscribers.length - 1;
+        this.subscribers[String(currentIndex + 1)] = subscriber;
+
+        console.log(`UpdateObserver: New subscription request, adding index ${currentIndex + 1}. There are now ${currentIndex + 2} subscribers.`)
+
+        return currentIndex + 1;
     }
 
     /**
-     * Deletes a subscriber to the subscription list
-     * @param subscriber 
-     * @returns 
+     * Deletes a subscriber from the subscription list
+     * @param index Index of the subscriber to delete
+     * @returns true if subscriber was removed, false if it doesn't exist
      */
-    deleteSubscriber(subscriber: Function) { // TODO
+    deleteSubscriber(index: number) { // TODO
+        console.log(`UpdateObserver: Subscriber ${index} requested to be deleted, there are now ${Object.values(this.subscribers).length} subscribers left.`);
 
+        if (!Object.values(this.subscribers)[index]) return false;
+
+        delete Object.values(this.subscribers)[index];
+
+        return true;
     }
 
     /**
      * Calls every subscribed function
      */
     callSubscribers() {
-        this.subscribers.forEach((e) => e());
+        Object.values(this.subscribers).forEach((e) => e());
     }
 }
