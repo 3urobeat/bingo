@@ -21,7 +21,7 @@
 <template>
     <div class="flex flex-col h-screen w-screen bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600">
         <hr class="h-0.5 my-16 bg-black border-0">
-        <div class="absolute self-center top-2 w-16">
+        <div class="absolute self-center top-1 w-21">
             <img :src="logosrc" alt="Logo"/>
         </div>
 
@@ -53,7 +53,7 @@
 
 
 <script setup lang="ts">
-    import logosrc from "./assets/logo.svg";
+    import logosrc from "./assets/logo.png";
     import packagejson from "./package.json";
     import GreetingsPage from "./components/GreetingsPage.vue";
     import BingoPage from "./components/BingoPage.vue";
