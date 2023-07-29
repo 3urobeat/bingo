@@ -20,9 +20,9 @@
 <template>
     <div class="bingo-wrapper flex self-center justify-center items-center">
         <div class="bingo-header-wrapper">
-            <a>{{ selectedName }}</a>
             <br />
             <a class="bingo-header-error text-red-500" v-if="showBingoHeaderError">Failed to load playfield!</a>
+            <ClientOnly><span class="text-3xl font-semibold">{{ selectedName }}</span></ClientOnly>
         </div>
 
         <div class="bingo-playfield-wrapper">
