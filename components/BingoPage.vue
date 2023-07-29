@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 12:38:25
+ * Last Modified: 29.07.2023 12:40:56
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -34,7 +34,9 @@
 
         <div class="bingo-controls-wrapper">
             <br />
+            <button @click="resetContents" class="bingo-controls-reset-contents">Delete Content</button>
             <button @click="toggleEditMode" class="bingo-controls-toggle-edit">Toggle Edit Mode</button>
+            <button @click="resetStrikes" class="bingo-controls-reset-strikes">Delete Strikes</button>
         </div>
     </div>
 </template>
@@ -89,6 +91,21 @@
 
 
     /**
+     * Function which gets called when the user clicks the "Delete Contents" button
+     * @param event DOM Button Click event
+     */
+    function resetContents(event: Event) {
+        if(confirm("Are you sure? This action cannot be undone!")) {
+            console.log("Resetting contents");
+
+            cards.value.forEach((e) => {
+                e.content = "";
+            });
+        }
+    }
+
+
+    /**
      * Function which gets called when the user clicks the "Toggle Edit Mode" button
      * @param event DOM Button Click event
      */
@@ -97,6 +114,20 @@
         editModeActive.value = !editModeActive.value;
     }
 
+
+    /**
+     * Function which gets called when the user clicks the "Delete Strikes" button
+     * @param event DOM Button Click event
+     */
+    function resetStrikes(event: Event) {
+        if(confirm("Are you sure? This action cannot be undone!")) {
+            console.log("Resetting strikes");
+
+            cards.value.forEach((e) => {
+                e.strike = false;
+            })
+        }
+    }
 </script>
 
 
