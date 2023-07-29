@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.8.0",
+    "@phosphor-icons/vue": "^2.1.6",
     "@seald-io/nedb": "^4.0.2",
     "@vueuse/core": "^10.2.1"
   }

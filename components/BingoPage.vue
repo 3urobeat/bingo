@@ -27,9 +27,11 @@
 
         <div class="bingo-playfield-wrapper">
             <div class="bingo-playfield-card" @click="cardClick" v-for="thiscard in cards" :id="thiscard.id">
-                <img class="bingo-playfield-card-x" v-if="thiscard.strike" :src="xSrc" :id="thiscard.id" alt="X"/>
                 <input type="text" v-if="editModeActive" @keyup.enter="cardInputUpdate" @keyup.esc="toggleEditMode" class="rounded-l" :id="thiscard.id" :value="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
                 <a type="text" v-if="!editModeActive" class="rounded-l" :id="thiscard.id">{{ thiscard.content }}</a>
+                <div class="absolute inset-0 w-full h-full flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
+                    <PhX size="700" fill="red"></PhX>
+                </div>
             </div>
         </div>
 
@@ -50,7 +52,7 @@
 
 
 <script setup lang="ts">
-    import xSrc from "../assets/X.png";
+    import { PhX } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
     // Get our playfield cards and their content
