@@ -1,11 +1,11 @@
 <!--
 /*
- * File: Greetings.vue
+ * File: index.vue
  * Project: bingo
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 22:40:16
+ * Last Modified: 29.07.2023 23:18:57
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -44,6 +44,9 @@
 <script setup lang="ts">
     import { useFetch } from '@vueuse/core'
 
+    const router = useRouter();
+
+
     // Get refs to various elements
     const nameinput = ref("");
     const names: Ref<any[]> = ref([]);
@@ -55,18 +58,12 @@
     let eventStream: EventSource;
 
     onBeforeMount(() => {
-        eventStream = new EventSource("/api/get-names");
+        eventStream = useEventStream("get-names");
 
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know and update the list
             names.value = JSON.parse(msg.data.split(" ").pop());
         })
-    });
-
-
-    // Clean up when the page is unmounted
-    onUnmounted(() => {
-        eventStream.close();
     });
 
 
@@ -81,7 +78,8 @@
 
         if (!lastActivity.isInactive) return; // ...if not, abort
 
-        // Update lastActivity in database, store name in localstorage and show bingo page
+
+        // Update lastActivity in database, store name in localstorage
         useFetch("/api/set-lastactivity", {
             method: "POST",
             headers: {
@@ -95,8 +93,9 @@
         localStorage.selectedName = selectedName;
         localStorage.lastActivity = Date.now();
 
-        document.getElementById("greetings-page-component").style = "display:none";
-        document.getElementById("bingo-page-component").style     = "";
+
+        // Redirect user to game room
+        router.push({ path: "/game/" + selectedName });
     };
 
     /**

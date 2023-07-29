@@ -1,11 +1,11 @@
 <!--
 /*
- * File: BingoPage.vue
+ * File: [room].vue
  * Project: bingo
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 22:57:07
+ * Last Modified: 29.07.2023 23:29:05
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -26,8 +26,8 @@
 
         <div class="bingo-playfield-wrapper">
             <div class="bingo-playfield-card relative w-20 md:w-40 aspect-square flex items-center justify-center" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
-                <div class="absolute inset-0 w-full h-full flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
-                    <PhX size="700" fill="red"></PhX>
+                <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
+                    <PhX size="" fill="red"></PhX>
                 </div>
                 <input type="text" class="rounded-lg w-full" v-if="editModeActive" @focusout="cardInputUpdate(thiscard)" v-model="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
                 <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
@@ -54,8 +54,11 @@
     import { PhX } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
+    const roomName = useRoute().params.room;
+
+
     // Get our playfield cards and their content
-    const selectedName = ref("");
+    const selectedName = ref(roomName);
     const showBingoHeaderError = ref(false);
     const cards: Ref<any[]> = ref([]);
     const names: Ref<any[]> = ref([]);
@@ -67,10 +70,6 @@
 
     // Load stuff on page load
     onBeforeMount(async () => {
-        // Display the selected name at the top
-        selectedName.value = window.localStorage.selectedName;
-
-
         // Start an interval to periodically update lastActivity. We are using a last update var as intervals can get imprecise over time
         let lastLastActivityUpdate = 0;
 
@@ -111,7 +110,7 @@
 
 
         // Get an event stream to update the names list on change
-        eventStream = new EventSource("/api/get-names");
+        eventStream = useEventStream("get-names");
 
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know
@@ -127,9 +126,8 @@
 
     // Clean up when the page is unmounted
     onUnmounted(() => {
-        eventStream.close();
         clearInterval(updateLastActivityInterval);
-    })
+    });
 
 
     /**

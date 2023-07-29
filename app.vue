@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 23:01:33
+ * Last Modified: 29.07.2023 23:26:38
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -45,9 +45,7 @@
             <p>Copyright (c) 2023 <a class="underline hover:text-gray-500 rounded-lg" href="https://github.com/3urobeat" target="_blank">3urobeat</a></p>
         </div>
 
-        <GreetingsPage id="greetings-page-component" class="h-full"></GreetingsPage>
-
-        <BingoPage id="bingo-page-component" class="h-full" style="display:none"></BingoPage> <!-- TODO: Convert to router instead of applying style -->
+        <NuxtPage></NuxtPage>
     </div>
 </template>
 
@@ -55,8 +53,8 @@
 <script setup lang="ts">
     import logosrc from "./assets/logo.png";
     import packagejson from "./package.json";
-    import GreetingsPage from "./components/GreetingsPage.vue";
-    import BingoPage from "./components/BingoPage.vue";
+
+    const router = useRouter();
 
 
     /**
@@ -70,8 +68,7 @@
         if (selectedName && Date.now() - Number(lastActivity) < 1.8e+6) {
             console.log("User has an active login, instantly showing bingo page...");
 
-            document.getElementById("greetings-page-component").style = "display:none";
-            document.getElementById("bingo-page-component").style     = "";
+            router.push({ path: "/game/" + selectedName });
         }
     });
 
