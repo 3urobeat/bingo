@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 18:58:15
+ * Last Modified: 29.07.2023 14:44:36
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -26,7 +26,7 @@
             <br />
             <button @click="play" class="greetings-new-name-play rounded-xl px-3">Play!</button>
             <br />
-            <div class="greetings-new-name-error" v-if="showNewNameError">Error!</div>
+            <div class="greetings-new-name-error text-red-500" v-if="showNewNameError">Error! This name is invalid or already in use!</div>
         </div>
 
         <div class="greetings-existing-name">
@@ -35,7 +35,7 @@
             <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-l">
                 <li v-for="thisname in names" @click="selectExistingName" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
-            <div class="greetings-existing-name-error" v-if="showExistingNameError">Error!</div>
+            <div class="greetings-existing-name-error text-red-500" v-if="showExistingNameError">Error! This name is already in use.</div>
         </div>
     </div>
 </template>
@@ -54,7 +54,7 @@
     // Get an event stream to update the names list on change
     let eventStream: EventSource;
 
-    onMounted(() => {
+    onBeforeMount(() => {
         eventStream = new EventSource("/api/get-names");
 
         eventStream.addEventListener("message", (msg) => {
