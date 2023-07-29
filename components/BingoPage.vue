@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 28.07.2023 17:55:35
+ * Last Modified: 29.07.2023 11:29:41
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,14 +20,20 @@
 <template>
     <div class="bingo-wrapper flex self-center justify-center items-center">
         <div class="bingo-header-wrapper">
-            <a>Name</a>
+            <a>{{ selectedName }}</a>
             <br />
         </div>
 
         <div class="bingo-playfield-wrapper">
             <div class="bingo-playfield-card" @click="cardClick" v-for="thiscard in cards" :id="thiscard.id">
-                <input type="text" @keyup.enter="cardInputUpdate" class="rounded-l" :id="thiscard.id" :value="thiscard.content">
+                <input type="text" v-if="editModeActive" @keyup.enter="cardInputUpdate" class="rounded-l" :id="thiscard.id" :value="thiscard.content">
+                <a type="text" v-if="!editModeActive" class="rounded-l" :id="thiscard.id">{{ thiscard.content }}</a>
             </div>
+        </div>
+
+        <div class="bingo-controls-wrapper">
+            <br />
+            <button @click="toggleEditMode" class="bingo-controls-toggle-edit">Toggle Edit Mode</button>
         </div>
     </div>
 </template>
@@ -37,13 +43,21 @@
     import { useFetch } from '@vueuse/core'
 
     // Get our playfield cards and their content
+    const selectedName = ref("");
     const cards: Ref<any[]> = ref([]);
+    const editModeActive = ref(false);
 
-    for (let i = 1; i <= 9; i++) {
-        cards.value.push({id: i, content: "testcontent"})
-    }
 
-    
+    // Load stuff on page load
+    onBeforeMount(() => {
+        for (let i = 1; i <= 9; i++) {
+            cards.value.push({id: i, content: "testcontent"})
+        }
+
+        selectedName.value = window.localStorage.selectedName;
+    })
+
+
     /**
      * Function which gets called when the user clicks a card
      * @param event DOM Button Click event
@@ -59,8 +73,22 @@
      * @param event DOM Button Click event
      */
     function cardInputUpdate(event: Event) {
-        // Get content of the card and update the database
         console.log("User updated card " + event.target.id + " with content " + event.target.value)
+
+        // Update card ref with the new content
+        cards.value.find(e => e.id == event.target.id).content = event.target.value;
+
+        // Send updated playfield to the database
+    }
+
+
+    /**
+     * Function which gets called when the user clicks the "Toggle Edit Mode" button
+     * @param event DOM Button Click event
+     */
+    function toggleEditMode(event: Event) {
+        console.log("Toggling edit mode");
+        editModeActive.value = !editModeActive.value;
     }
 
 </script>
@@ -77,7 +105,7 @@
         grid-template-areas:
             ". bingo-header ."
             ". bingo-playfield-wrapper ."
-            ". . ."
+            ". bingo-controls-wrapper ."
             ". . .";
     }
 
@@ -98,4 +126,7 @@
         text-align: center;
     }
 
+    .bingo-controls-wrapper {
+        grid-area: bingo-controls-wrapper;
+    }
 </style>
