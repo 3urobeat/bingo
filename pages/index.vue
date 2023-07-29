@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 23:18:57
+ * Last Modified: 30.07.2023 00:09:44
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,20 +18,16 @@
 
 
 <template>
-    <div class="greetings-wrapper flex self-center justify-center items-center">
+    <div class="greetings-wrapper flex flex-col items-center">
         <div class="greetings-new-name">
             <span>Dein Name:</span>
-            <br />
             <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
-            <br />
-            <button @click="play" class="greetings-new-name-play rounded-xl px-3 bg-playbtn">Play!</button>
-            <br />
+            <button @click="play" class="greetings-new-name-play rounded-xl px-3 bg-playbtn hover:bg-lime-500">Play!</button>
             <div class="greetings-new-name-error text-red-500" v-if="showNewNameError">Error! This name is invalid or already in use!</div>
         </div>
 
         <div class="greetings-existing-name">
             <span>...oder wähle einen aus:</span>
-            <br />
             <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg">
                 <li v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
@@ -152,10 +148,11 @@
         display: grid;
         grid-auto-flow: row;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr 1fr 1fr;
-        gap: 10px;
+        @apply gap-y-16 md:gap-x-0;
         grid-auto-flow: row;
         grid-template-areas:
+            ". . ."
+            ". . ."
             ". name-input ."
             ". existing-names ."
             ". . ."

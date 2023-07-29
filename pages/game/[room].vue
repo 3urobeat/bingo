@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 23:29:05
+ * Last Modified: 30.07.2023 00:05:16
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,18 +18,18 @@
 
 
 <template>
-    <div class="bingo-wrapper flex self-center justify-center items-center">
-        <div class="bingo-header-wrapper flex flex-col items-center -mt-10">
-            <ClientOnly><span class="text-3xl font-semibold">{{ selectedName }}</span></ClientOnly>
+    <div class="absolute bingo-wrapper items-center">
+        <div class="bingo-header-wrapper flex flex-col items-center">
+            <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
         </div>
 
         <div class="bingo-playfield-wrapper">
-            <div class="bingo-playfield-card relative w-20 md:w-40 aspect-square flex items-center justify-center" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
+            <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
                 <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                     <PhX size="" fill="red"></PhX>
                 </div>
-                <input type="text" class="rounded-lg w-full" v-if="editModeActive" @focusout="cardInputUpdate(thiscard)" v-model="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
+                <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate(thiscard)" v-model="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
                 <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
             </div>
         </div>
@@ -85,6 +85,8 @@
                     name: selectedName.value
                 })
             });
+
+            lastLastActivityUpdate = Date.now();
         }, 150000); // 2.5 min
 
 
@@ -210,10 +212,12 @@
         display: grid;
         grid-auto-flow: row;
         grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr 1fr 1fr;
-        gap: 0px 0px;
+        @apply gap-y-10 md:gap-x-0;
+        @apply md:gap-y-16 md:gap-x-0;
         grid-auto-flow: row;
         grid-template-areas:
+            ". . ."
+            ". . ."
             ". bingo-header-wrapper ."
             ". bingo-playfield-wrapper bingo-players-list-wrapper"
             ". bingo-controls-wrapper ."

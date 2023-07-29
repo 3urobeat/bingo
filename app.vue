@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 23:26:38
+ * Last Modified: 29.07.2023 23:47:34
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,7 +20,7 @@
 
 <template>
     <div class="flex flex-col h-screen w-screen bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600">
-        <hr class="h-0.5 my-16 bg-black border-0"> <!-- TODO: Bug: Disappears when cards are striked -->
+        <hr class="absolute h-0.5 mt-16 w-full bg-black border-0"> <!-- TODO: Bug: Disappears when cards are striked -->
         <div class="absolute self-center top-1 w-21">
             <img :src="logosrc" alt="Logo"/>
         </div>
