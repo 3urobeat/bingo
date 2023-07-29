@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 12:40:56
+ * Last Modified: 29.07.2023 13:32:10
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -32,6 +32,13 @@
             </div>
         </div>
 
+        <div class="bingo-players-list-wrapper">
+            <a>Active Players:</a>
+            <ul id="bingo-players-list" class="bingo-players-list rounded-l outline outline-black outline-2">
+                <li v-for="thisname in names" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
+            </ul>
+        </div>
+
         <div class="bingo-controls-wrapper">
             <br />
             <button @click="resetContents" class="bingo-controls-reset-contents">Delete Content</button>
@@ -49,17 +56,37 @@
     // Get our playfield cards and their content
     const selectedName = ref("");
     const cards: Ref<any[]> = ref([]);
+    const names: Ref<any[]> = ref([]);
     const editModeActive = ref(false);
+
+    let eventStream: EventSource;
 
 
     // Load stuff on page load
     onBeforeMount(() => {
+        // Generate a playfield
         for (let i = 1; i <= 9; i++) {
             cards.value.push({id: i, content: "testcontent", strike: false})
         }
 
+
+        // Display the selected name at the top
         selectedName.value = window.localStorage.selectedName;
-    })
+
+
+        // Get an event stream to update the names list on change
+        eventStream = new EventSource("/api/get-names");
+
+        eventStream.addEventListener("message", (msg) => {
+            // Get a list of all names we currently know and update the list
+            names.value = JSON.parse(msg.data.split(" ").pop());
+        })
+
+        // Clean up when the page is unmounted
+        onUnmounted(() => {
+            eventStream.close();
+        })
+    });
 
 
     /**
@@ -140,13 +167,15 @@
         gap: 0px 0px;
         grid-auto-flow: row;
         grid-template-areas:
-            ". bingo-header ."
-            ". bingo-playfield-wrapper ."
+            ". bingo-header-wrapper ."
+            ". bingo-playfield-wrapper bingo-players-list-wrapper"
             ". bingo-controls-wrapper ."
             ". . .";
     }
 
-    .bingo-header-wrapper { grid-area: bingo-header; }
+    .bingo-header-wrapper {
+        grid-area: bingo-header-wrapper;
+    }
 
     .bingo-playfield-wrapper {
         grid-area: bingo-playfield-wrapper;
@@ -161,6 +190,10 @@
         border: 1px solid rgba(0, 0, 0, 0.8);
         padding: 20px;
         text-align: center;
+    }
+
+    .bingo-players-list-wrapper {
+        grid-area: bingo-players-list-wrapper;
     }
 
     .bingo-controls-wrapper {
