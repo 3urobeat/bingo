@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 20:04:14
+ * Last Modified: 29.07.2023 20:23:47
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -41,8 +41,8 @@
                 <a class="text-gray-400 rounded-l" href="https://github.com/3urobeat/bingo" target="_blank">Source Code</a>
             </button>
 
-            <a>This application is licensed under the <a1 class="underline hover:text-gray-500 rounded-l" href="https://www.gnu.org/licenses/" target="_blank">GPLv3 license</a1></a>
-            <a>Copyright (c) 2023 <a1 class="underline hover:text-gray-500 rounded-l" href="https://github.com/3urobeat" target="_blank">3urobeat</a1></a>
+            <p>This application is licensed under the <a class="underline hover:text-gray-500 rounded-l" href="https://www.gnu.org/licenses/" target="_blank">GPLv3 license</a></p>
+            <p>Copyright (c) 2023 <a class="underline hover:text-gray-500 rounded-l" href="https://github.com/3urobeat" target="_blank">3urobeat</a></p>
         </div>
 
         <GreetingsPage id="greetings-page-component" class="h-full"></GreetingsPage>
