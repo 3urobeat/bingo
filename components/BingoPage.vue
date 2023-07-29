@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 13:32:10
+ * Last Modified: 29.07.2023 13:36:14
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -26,7 +26,7 @@
 
         <div class="bingo-playfield-wrapper">
             <div class="bingo-playfield-card" @click="cardClick" v-for="thiscard in cards" :id="thiscard.id">
-                <img class="bingo-playfield-card-x" v-if="thiscard.strike" :src="xSrc" alt="X"/>
+                <img class="bingo-playfield-card-x" v-if="thiscard.strike" :src="xSrc" :id="thiscard.id" alt="X"/>
                 <input type="text" v-if="editModeActive" @keyup.enter="cardInputUpdate" @keyup.esc="toggleEditMode" class="rounded-l" :id="thiscard.id" :value="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
                 <a type="text" v-if="!editModeActive" class="rounded-l" :id="thiscard.id">{{ thiscard.content }}</a>
             </div>
