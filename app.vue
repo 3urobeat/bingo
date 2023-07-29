@@ -19,16 +19,16 @@
 
 
 <template>
-    <div class="flex flex-col h-screen w-screen bg-gray-400">
+    <div class="flex flex-col h-screen w-screen bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600">
         <hr class="h-0.5 my-16 bg-black border-0">
         <div class="absolute self-center top-2 w-16">
             <img :src="logosrc" alt="Logo"/>
         </div>
 
         <select class="absolute right-5 top-5
-         px-2 py-1 rounded-xl bg-gray-500 hover:bg-gray-600">
-            <option value="lang-english" class="bg-gray-500 hover:bg-gray-600">🇬🇧 English</option>
-            <option value="lang-german" class="bg-gray-500 hover:bg-gray-600">🇩🇪 Deutsch</option>
+         px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700">
+            <option value="lang-english" class="bg-gray-600 hover:bg-gray-700">🇬🇧 English</option>
+            <option value="lang-german" class="bg-gray-600 hover:bg-gray-700">🇩🇪 Deutsch</option>
         </select>
 
         <div class="absolute bottom-2 self-center text-center text-black">
@@ -42,7 +42,7 @@
             </button>
             <a class="hover:text-gray-500 rounded-l" href="https://github.com/3urobeat/bingo" target="_blank"></a>
             <br/>
-            <a class="items-center text-black">
+            <a class="items-center">
                 This application is licensed under the <a class="underline hover:text-gray-500 rounded-l" href="https://www.gnu.org/licenses/" target="_blank">GPLv3 license</a>
                 <br/>
                 Copyright (c) 2023 <a class="underline hover:text-gray-500 rounded-l" href="https://github.com/3urobeat" target="_blank">3urobeat</a>
