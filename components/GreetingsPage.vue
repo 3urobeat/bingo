@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 14:44:36
+ * Last Modified: 29.07.2023 22:40:16
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,20 +20,20 @@
 <template>
     <div class="greetings-wrapper flex self-center justify-center items-center">
         <div class="greetings-new-name">
-            <a>Dein Name:</a>
+            <span>Dein Name:</span>
             <br />
-            <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-l">
+            <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
             <br />
-            <button @click="play" class="greetings-new-name-play rounded-xl px-3">Play!</button>
+            <button @click="play" class="greetings-new-name-play rounded-xl px-3 bg-playbtn">Play!</button>
             <br />
             <div class="greetings-new-name-error text-red-500" v-if="showNewNameError">Error! This name is invalid or already in use!</div>
         </div>
 
         <div class="greetings-existing-name">
-            <a>...oder wähle einen aus:</a>
+            <span>...oder wähle einen aus:</span>
             <br />
-            <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-l">
-                <li v-for="thisname in names" @click="selectExistingName" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
+            <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg">
+                <li v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
             <div class="greetings-existing-name-error text-red-500" v-if="showExistingNameError">Error! This name is already in use.</div>
         </div>
@@ -61,11 +61,12 @@
             // Get a list of all names we currently know and update the list
             names.value = JSON.parse(msg.data.split(" ").pop());
         })
+    });
 
-        // Clean up when the page is unmounted
-        onUnmounted(() => {
-            eventStream.close();
-        })
+
+    // Clean up when the page is unmounted
+    onUnmounted(() => {
+        eventStream.close();
     });
 
 
@@ -74,7 +75,7 @@
      * @param selectedName The name selected by the user
      * @param lastActivity If an existing name, the lastActivity timestamp from the database
      */
-    function startGame(selectedName: string, lastActivity: { lastActivity: number, isInactive: number }) {
+    function startGame(selectedName: string, lastActivity: { lastActivity: number, isInactive: boolean }) {
         // Check if we are allowed to choose this name
         showExistingNameError.value = !lastActivity.isInactive;
 
@@ -124,10 +125,8 @@
 
     /**
      * Function which gets called when the user selects an existing name
-     * @param event DOM Button Click event
      */
-    async function selectExistingName(event: Event) {
-        const selectedName = event.target.innerHTML;
+    async function selectExistingName(name: string) {
 
         // Check if name is currently in use
         const res = await useFetch("/api/get-lastactivity", { // TODO: Stupid that this is a POST
@@ -136,15 +135,15 @@
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                name: selectedName
+                name: name
             })
         });
 
-        const lastActivity = JSON.parse(res.data.value);
+        const lastActivity = JSON.parse(res.data.value as string);
 
-        console.log("User selected existing name '" + event.target.innerHTML + "' which is " + (lastActivity.isInactive ? "available." : "not available!"))
+        console.log("User selected existing name '" + name + "' which is " + (lastActivity.isInactive ? "available." : "not available!"))
 
-        startGame(selectedName, lastActivity);
+        startGame(name, lastActivity);
     };
 </script>
 
@@ -164,14 +163,17 @@
             ". . .";
     }
 
-    .greetings-new-name { grid-area: name-input; }
+    .greetings-new-name {
+        grid-area: name-input;
+    }
 
     .greetings-new-name-play {
-        @apply bg-playbtn;
         margin-top: 10px;
     }
     
-    .greetings-existing-name { grid-area: existing-names; }
+    .greetings-existing-name {
+        grid-area: existing-names;
+    }
 
     .greetings-existing-names-list {
         border-style: solid;

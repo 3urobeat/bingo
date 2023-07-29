@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 20:10:22
+ * Last Modified: 29.07.2023 22:49:53
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -19,25 +19,24 @@
 
 <template>
     <div class="bingo-wrapper flex self-center justify-center items-center">
-        <div class="bingo-header-wrapper">
-            <br />
-            <a class="bingo-header-error text-red-500" v-if="showBingoHeaderError">Failed to load playfield!</a>
+        <div class="bingo-header-wrapper flex flex-col items-center -mt-10">
             <ClientOnly><span class="text-3xl font-semibold">{{ selectedName }}</span></ClientOnly>
+            <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
         </div>
 
         <div class="bingo-playfield-wrapper">
-            <div class="bingo-playfield-card" @click="cardClick" v-for="thiscard in cards" :id="thiscard.id">
-                <input type="text" v-if="editModeActive" @keyup.enter="cardInputUpdate" @keyup.esc="toggleEditMode" class="rounded-l" :id="thiscard.id" :value="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
-                <a type="text" v-if="!editModeActive" class="rounded-l" :id="thiscard.id">{{ thiscard.content }}</a>
+            <div class="bingo-playfield-card relative w-20 md:w-40 aspect-square flex items-center justify-center" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
                 <div class="absolute inset-0 w-full h-full flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                     <PhX size="700" fill="red"></PhX>
                 </div>
+                <input type="text" class="rounded-lg w-full" v-if="editModeActive" @focusout="cardInputUpdate(thiscard)" v-model="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
+                <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
             </div>
         </div>
 
-        <div class="bingo-players-list-wrapper">
-            <a>Active Players:</a>
-            <ul id="bingo-players-list" class="bingo-players-list rounded-l outline outline-black outline-2">
+        <div class="bingo-players-list-wrapper ml-2">
+            <span class="font-semibold">Active Players:</span>
+            <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
                 <li v-for="thisname in names" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
         </div>
@@ -63,6 +62,7 @@
     const editModeActive = ref(false);
 
     let eventStream: EventSource;
+    let updateLastActivityInterval: NodeJS.Timer;
 
 
     // Load stuff on page load
@@ -74,7 +74,7 @@
         // Start an interval to periodically update lastActivity. We are using a last update var as intervals can get imprecise over time
         let lastLastActivityUpdate = 0;
 
-        setInterval(() => {
+        updateLastActivityInterval = setInterval(() => {
             if (Date.now() - lastLastActivityUpdate < 300000) return; // Ignore iteration if last update is less than 5 min ago.
 
             useFetch("/api/set-lastactivity", {
@@ -102,11 +102,11 @@
 
         if (!playfieldData || playfieldData.data.value == "false") return showBingoHeaderError.value = true;
 
-        const playfield = JSON.parse(playfieldData.data.value).playfield;
+        const playfield = JSON.parse(playfieldData.data.value as string).playfield;
 
         // Generate a playfield
         for (let i = 1; i <= 9; i++) {
-            cards.value.push(playfield.find(e => e.id == i));
+            cards.value.push(playfield.find((e: { id: number }) => e.id == i));
         }
 
 
@@ -122,25 +122,26 @@
                 return (Date.now() - e.lastActivity < 1.8e+6);
             });
         })
-
-        // Clean up when the page is unmounted
-        onUnmounted(() => {
-            eventStream.close();
-        })
     });
+
+
+    // Clean up when the page is unmounted
+    onUnmounted(() => {
+        eventStream.close();
+        clearInterval(updateLastActivityInterval);
+    })
 
 
     /**
      * Function which gets called when the user clicks a card
-     * @param event DOM Button Click event
      */
-    function cardClick(event: Event) {
+    function cardClick(id: number) {
         if (editModeActive.value) return; // Ignore click if the edit mode is active
 
-        console.log("User clicked card with id " + event.target.id);
+        console.log("User clicked card with id " + id);
 
         // Update card ref with negated strike property
-        const el = cards.value.find(e => e.id == event.target.id);
+        const el = cards.value.find(e => e.id == id);
         
         el.strike = !el.strike;
     }
@@ -148,13 +149,9 @@
 
     /**
      * Function which gets called when the user submits card input
-     * @param event DOM Button Click event
      */
-    async function cardInputUpdate(event: Event) {
-        console.log("User updated card " + event.target.id + " with content " + event.target.value)
-
-        // Update card ref with the new content
-        cards.value.find(e => e.id == event.target.id).content = event.target.value;
+    async function cardInputUpdate(thiscard: { id: number, content: string }) {
+        console.log("User updated card " + thiscard.id + " with content " + thiscard.content)
 
         // Send updated playfield to the database
         await useFetch("/api/set-playfield", {
@@ -187,9 +184,8 @@
 
     /**
      * Function which gets called when the user clicks the "Toggle Edit Mode" button
-     * @param event DOM Button Click event
      */
-    function toggleEditMode(event: Event) {
+    function toggleEditMode(thiscard: any) {
         console.log("Toggling edit mode");
         editModeActive.value = !editModeActive.value;
     }
