@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 13:20:42
+ * Last Modified: 29.07.2023 17:52:04
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -60,7 +60,6 @@
     import logosrc from "./assets/logo.svg";
     import packagejson from "./package.json";
     import GreetingsPage from "./components/GreetingsPage.vue";
-    import Navbar from "./components/Navbar.vue";
     import BingoPage from "./components/BingoPage.vue";
 
 
