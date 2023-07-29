@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 13:36:14
+ * Last Modified: 29.07.2023 13:43:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -78,8 +78,13 @@
         eventStream = new EventSource("/api/get-names");
 
         eventStream.addEventListener("message", (msg) => {
-            // Get a list of all names we currently know and update the list
-            names.value = JSON.parse(msg.data.split(" ").pop());
+            // Get a list of all names we currently know
+            const res = JSON.parse(msg.data.split(" ").pop());
+
+            // Get only names which have been active in the last 30 minutes
+            names.value = res.filter((e: {name: string, lastActivity: number}) => {
+                return (Date.now() - e.lastActivity < 1.8e+6);
+            });
         })
 
         // Clean up when the page is unmounted
