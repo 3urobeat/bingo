@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 13:43:00
+ * Last Modified: 29.07.2023 14:42:18
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,6 +22,7 @@
         <div class="bingo-header-wrapper">
             <a>{{ selectedName }}</a>
             <br />
+            <a class="bingo-header-error text-red-500" v-if="showBingoHeaderError">Failed to load playfield!</a>
         </div>
 
         <div class="bingo-playfield-wrapper">
@@ -55,6 +56,7 @@
 
     // Get our playfield cards and their content
     const selectedName = ref("");
+    const showBingoHeaderError = ref(false);
     const cards: Ref<any[]> = ref([]);
     const names: Ref<any[]> = ref([]);
     const editModeActive = ref(false);
@@ -63,15 +65,30 @@
 
 
     // Load stuff on page load
-    onBeforeMount(() => {
-        // Generate a playfield
-        for (let i = 1; i <= 9; i++) {
-            cards.value.push({id: i, content: "testcontent", strike: false})
-        }
-
-
+    onBeforeMount(async () => {
         // Display the selected name at the top
         selectedName.value = window.localStorage.selectedName;
+
+
+        // Get playfield data stored for this user
+        const playfieldData = await useFetch("/api/get-playfield", { // TODO: Stupid that this is a POST
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: selectedName.value
+            })
+        });
+
+        if (!playfieldData || playfieldData.data.value == "false") return showBingoHeaderError.value = true;
+
+        const playfield = JSON.parse(playfieldData.data.value).playfield;
+
+        // Generate a playfield
+        for (let i = 1; i <= 9; i++) {
+            cards.value.push(playfield.find(e => e.id == i));
+        }
 
 
         // Get an event stream to update the names list on change
@@ -99,6 +116,8 @@
      * @param event DOM Button Click event
      */
     function cardClick(event: Event) {
+        if (editModeActive.value) return; // Ignore click if the edit mode is active
+
         console.log("User clicked card with id " + event.target.id);
 
         // Update card ref with negated strike property
@@ -112,13 +131,23 @@
      * Function which gets called when the user submits card input
      * @param event DOM Button Click event
      */
-    function cardInputUpdate(event: Event) {
+    async function cardInputUpdate(event: Event) {
         console.log("User updated card " + event.target.id + " with content " + event.target.value)
 
         // Update card ref with the new content
         cards.value.find(e => e.id == event.target.id).content = event.target.value;
 
         // Send updated playfield to the database
+        await useFetch("/api/set-playfield", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: window.localStorage.selectedName,
+                playfield: cards.value
+            })
+        });
     }
 
 
@@ -127,7 +156,7 @@
      * @param event DOM Button Click event
      */
     function resetContents(event: Event) {
-        if(confirm("Are you sure? This action cannot be undone!")) {
+        if (confirm("Are you sure? This action cannot be undone!")) {
             console.log("Resetting contents");
 
             cards.value.forEach((e) => {
@@ -152,12 +181,12 @@
      * @param event DOM Button Click event
      */
     function resetStrikes(event: Event) {
-        if(confirm("Are you sure? This action cannot be undone!")) {
+        if (confirm("Are you sure? This action cannot be undone!")) {
             console.log("Resetting strikes");
 
             cards.value.forEach((e) => {
                 e.strike = false;
-            })
+            });
         }
     }
 </script>
