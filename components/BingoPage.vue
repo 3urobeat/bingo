@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 29.07.2023 11:29:41
+ * Last Modified: 29.07.2023 12:38:25
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -26,7 +26,8 @@
 
         <div class="bingo-playfield-wrapper">
             <div class="bingo-playfield-card" @click="cardClick" v-for="thiscard in cards" :id="thiscard.id">
-                <input type="text" v-if="editModeActive" @keyup.enter="cardInputUpdate" class="rounded-l" :id="thiscard.id" :value="thiscard.content">
+                <img class="bingo-playfield-card-x" v-if="thiscard.strike" :src="xSrc" alt="X"/>
+                <input type="text" v-if="editModeActive" @keyup.enter="cardInputUpdate" @keyup.esc="toggleEditMode" class="rounded-l" :id="thiscard.id" :value="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
                 <a type="text" v-if="!editModeActive" class="rounded-l" :id="thiscard.id">{{ thiscard.content }}</a>
             </div>
         </div>
@@ -40,6 +41,7 @@
 
 
 <script setup lang="ts">
+    import xSrc from "../assets/X.png";
     import { useFetch } from '@vueuse/core'
 
     // Get our playfield cards and their content
@@ -51,7 +53,7 @@
     // Load stuff on page load
     onBeforeMount(() => {
         for (let i = 1; i <= 9; i++) {
-            cards.value.push({id: i, content: "testcontent"})
+            cards.value.push({id: i, content: "testcontent", strike: false})
         }
 
         selectedName.value = window.localStorage.selectedName;
@@ -63,8 +65,12 @@
      * @param event DOM Button Click event
      */
     function cardClick(event: Event) {
-        // Update the database
-        console.log("User clicked card with id " + event.target.id)
+        console.log("User clicked card with id " + event.target.id);
+
+        // Update card ref with negated strike property
+        const el = cards.value.find(e => e.id == event.target.id);
+        
+        el.strike = !el.strike;
     }
 
 
