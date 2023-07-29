@@ -70,6 +70,24 @@
         selectedName.value = window.localStorage.selectedName;
 
 
+        // Start an interval to periodically update lastActivity. We are using a last update var as intervals can get imprecise over time
+        let lastLastActivityUpdate = 0;
+
+        setInterval(() => {
+            if (Date.now() - lastLastActivityUpdate < 300000) return; // Ignore iteration if last update is less than 5 min ago.
+
+            useFetch("/api/set-lastactivity", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: selectedName.value
+                })
+            });
+        }, 150000); // 2.5 min
+
+
         // Get playfield data stored for this user
         const playfieldData = await useFetch("/api/get-playfield", { // TODO: Stupid that this is a POST
             method: "POST",
