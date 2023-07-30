@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 14:19:08
+ * Last Modified: 30.07.2023 14:42:55
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,14 +18,14 @@
 
 
 <template>
-    <div class="absolute bingo-wrapper items-center">
+    <div class="absolute bingo-wrapper items-center gap-y-10 md:gap-x-0 md:gap-y-16 md:gap-x-0">
         <div class="bingo-header-wrapper flex flex-col items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
         </div>
 
-        <div class="bingo-playfield-wrapper">
-            <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
+        <div class="bingo-playfield-wrapper grid gap-2 p-2">
+            <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center bg-white p-5 text-center border-[1px] border-solid border-black" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
                 <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                     <PhX size="" fill="red"></PhX>
                 </div>
@@ -37,7 +37,7 @@
         <div class="bingo-players-list-wrapper ml-2">
             <span class="font-semibold">Active Players:</span>
             <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
-                <li class="clearfix" v-for="thisname in names" :key="thisname">
+                <li class="ml-4 clearfix" v-for="thisname in names" :key="thisname">
                     {{thisname.name}} <span class="relative float-right mr-4">{{ thisname.strikesCount }}/{{ thisname.cardsCount }}</span>
                 </li>
             </ul>
@@ -272,8 +272,6 @@
         display: grid;
         grid-auto-flow: row;
         grid-template-columns: 1fr 1fr 1fr;
-        @apply gap-y-10 md:gap-x-0;
-        @apply md:gap-y-16 md:gap-x-0;
         grid-auto-flow: row;
         grid-template-areas:
             ". . ."
@@ -290,17 +288,7 @@
 
     .bingo-playfield-wrapper {
         grid-area: bingo-playfield-wrapper;
-        display: grid;
         grid-template-columns: auto auto auto;
-        gap: 10px;
-        padding: 10px;
-    }
-
-    .bingo-playfield-card {
-        background-color: rgb(255, 255, 255);
-        border: 1px solid rgba(0, 0, 0, 0.8);
-        padding: 20px;
-        text-align: center;
     }
 
     .bingo-players-list-wrapper {
@@ -309,12 +297,5 @@
 
     .bingo-controls-wrapper {
         grid-area: bingo-controls-wrapper;
-    }
-
-    li:before {
-        width: 21px;
-        /* height: 21px; */
-        display: inline-block;
-        content: " ";
     }
 </style>
