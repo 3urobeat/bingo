@@ -1,10 +1,10 @@
 /*
- * File: set-name.ts
+ * File: set-language.ts
  * Project: bingo
- * Created Date: 27.07.2023 19:59:02
+ * Created Date: 30.07.2023 15:03:45
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 15:13:17
+ * Last Modified: 30.07.2023 15:17:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,12 +16,11 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
-import { UpdateObserver } from "../updateObserver";
 
 
 /**
- * This API route inserts a record for a new user and returns a boolean if the name was accepted. Duplicate names will be rejected.
- * Params: { name: string, lang?: string }
+ * This API route updates the user's lang property and returns boolean if update was successful.
+ * Params: { name: string, lang: string }
  * Returns: "boolean"
  */
 
@@ -34,30 +33,14 @@ export default defineEventHandler(async (event) => {
     // Read body of the request we received
     const params = await readBody(event);
 
-    if (params.name) {
+    console.log(`API set-language: Updating lang of user '${params.name}' to '${params.lang}'`);
+
+    if (params.lang) {
         // TODO: Check for invalid names
 
-        // Check for existing record and reject request
-        const existingNames = await db.findAsync({ name: params.name });
+        // Update database record
+        await db.updateAsync({ name: params.name }, { $set: { lang: params.lang } }, { });
 
-        if (existingNames.length > 0) return false;
-
-
-        // Set default lang if none was specified
-        if (!params.lang) params.lang = "english";
-
-
-        // Upsert new database record
-        await db.insertAsync({ name: params.name, lastActivity: Date.now(), lang: params.lang, playfield: [] });
-
-        console.log(`API set-name: Inserting new name '${params.name}'`);
-
-
-        // Update every subscriber
-        UpdateObserver.getInstance().callSubscribers();
-
-
-        // Return true because request was accepted
         return true;
     }
 
