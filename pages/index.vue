@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 14:37:14
+ * Last Modified: 30.07.2023 15:01:04
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -29,6 +29,7 @@
         <div class="greetings-existing-name">
             <span>...oder wähle einen aus:</span>
             <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg border-solid border-2 border-black">
+                <span class="ml-4" v-if="names.length == 0">No existing names found!</span>
                 <li class="ml-4" v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
             <div class="greetings-existing-name-error text-red-500 mt-5" v-if="showExistingNameError">Error! This name is already in use.</div>
