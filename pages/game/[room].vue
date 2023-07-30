@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 17:40:12
+ * Last Modified: 31.07.2023 00:22:43
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -21,6 +21,11 @@
     <div class="absolute bingo-wrapper items-center w-screen gap-x-0 gap-y-10 md:gap-x-0 md:gap-y-16 mt-16"> <!-- mt-16 is a stupid fix to prevent it clipping into the navbar -->
         <div class="bingo-header-wrapper flex flex-col items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
+            
+            <select class="px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700"> <!-- This v-model updates the lang ref with the selected option -->
+                <option v-for="thissize in playfieldSizes" @click="selectPlayfieldSize(thissize)" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
+            </select>
+
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
         </div>
 
@@ -29,7 +34,7 @@
                 <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                     <PhX size="" fill="red"></PhX>
                 </div>
-                <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate(thiscard)" v-model="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
+                <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate()" v-model="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
                 <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
             </div>
         </div>
@@ -59,9 +64,10 @@
     const router   = useRouter();
     const roomName = useRoute().params.room;
 
-
-    // Get our playfield cards and their content
+    // Get various refs
     const selectedName = ref(roomName);
+    const playfieldSizes = ref([{ amount: 9, str: "3x3" }, { amount: 16, str: "4x4" }, { amount: 25, str: "5x5" }, { amount: 36, str: "6x6" }]);
+    const selectedSize = ref(playfieldSizes.value[2].amount); // Use the 5x5 as default
     const showBingoHeaderError = ref(false);
     const cards: Ref<any[]> = ref([]);
     const names: Ref<any[]> = ref([]);
@@ -76,6 +82,12 @@
         // Redirect user to their room if they try to visit another user's room
         if (roomName != window.localStorage.selectedName) {
             router.push({ path: "/game/" + window.localStorage.selectedName });
+            return;
+        }
+
+        // Redirect user to index page if they have no name selected or lastActivity is > 30 min ago
+        if (!window.localStorage.selectedName || Date.now() - window.localStorage.lastActivity > 1.8e+6) {
+            router.push({ path: "/" });
             return;
         }
 
@@ -119,7 +131,7 @@
         if (Object.keys(playfield).length == 0) {
             console.log("Generating new playfield for this user");
 
-            for (let i = 1; i <= 9; i++) {
+            for (let i = 1; i <= selectedSize.value; i++) {
                 cards.value.push({ id: i, content: "", strike: false });
             }
 
@@ -131,6 +143,9 @@
                 cards.value.push(playfield.find((e: { id: number }) => e.id == i));
             }
         }
+
+        // Select the correct size in the dropdown
+        selectedSize.value = Object.keys(playfield).length;
 
 
         // Get an event stream to update the names list on change
@@ -155,6 +170,27 @@
 
 
     /**
+     * Function which gets called when the user selects a (different) playfield size
+     */
+    function selectPlayfieldSize(size: { amount: number, str: string }) {
+        console.log("User selected playfield size " + size.str);
+
+        // Display warning if the playfield size shrinks
+        if (size.amount < cards.value.length) {
+            if (confirm("Shrinking your playfield will loose data! Are you sure?")) {
+                cards.value.splice(size.amount, cards.value.length - size.amount); // Remove cards from the end to reach new size
+            }
+        } else {
+            for (let i = cards.value.length + 1; i <= size.amount; i++) {
+                cards.value.push({ id: i, content: "", strike: false }); // Push new cards to the end to reach new size
+            }
+        }
+
+        cardInputUpdate();
+    }
+
+
+    /**
      * Function which gets called when the user clicks a card
      */
     function cardClick(id: number) {
@@ -168,24 +204,15 @@
         el.strike = !el.strike;
 
         // Send updated playfield to the database
-        useFetch("/api/set-playfield", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: selectedName.value,
-                playfield: cards.value
-            })
-        });
+        cardInputUpdate();
     }
 
 
     /**
      * Function which gets called when the user submits card input
      */
-    async function cardInputUpdate(thiscard: { id: number, content: string }) {
-        console.log("User updated card " + thiscard.id + " with content " + thiscard.content)
+    function cardInputUpdate() {
+        console.log("User updated their playfield, updating database")
 
         // Send updated playfield to the database
         useFetch("/api/set-playfield", {
@@ -215,16 +242,7 @@
             });
 
             // Send updated playfield to the database
-            useFetch("/api/set-playfield", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: selectedName.value,
-                    playfield: cards.value
-                })
-            });
+            cardInputUpdate();
         }
     }
 
@@ -252,16 +270,7 @@
             });
 
             // Send updated playfield to the database
-            useFetch("/api/set-playfield", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: selectedName.value,
-                    playfield: cards.value
-                })
-            });
+            cardInputUpdate();
         }
     }
 </script>
