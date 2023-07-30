@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 12:24:39
+ * Last Modified: 30.07.2023 12:31:26
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -54,6 +54,7 @@
     import { PhX } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
+    const router   = useRouter();
     const roomName = useRoute().params.room;
 
 
@@ -70,6 +71,13 @@
 
     // Load stuff on page load
     onBeforeMount(async () => {
+        // Redirect user to their room if they try to visit another user's room
+        if (roomName != window.localStorage.selectedName) {
+            router.push({ path: "/game/" + window.localStorage.selectedName });
+            return;
+        }
+
+
         // Start an interval to periodically update lastActivity. We are using a last update var as intervals can get imprecise over time
         let lastLastActivityUpdate = 0;
 
