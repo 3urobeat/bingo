@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 14:42:55
+ * Last Modified: 30.07.2023 17:40:12
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,7 +18,7 @@
 
 
 <template>
-    <div class="absolute bingo-wrapper items-center gap-y-10 md:gap-x-0 md:gap-y-16 md:gap-x-0">
+    <div class="absolute bingo-wrapper items-center w-screen gap-x-0 gap-y-10 md:gap-x-0 md:gap-y-16 mt-16"> <!-- mt-16 is a stupid fix to prevent it clipping into the navbar -->
         <div class="bingo-header-wrapper flex flex-col items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
@@ -274,7 +274,6 @@
         grid-template-columns: 1fr 1fr 1fr;
         grid-auto-flow: row;
         grid-template-areas:
-            ". . ."
             ". . ."
             ". bingo-header-wrapper ."
             ". bingo-playfield-wrapper bingo-players-list-wrapper"

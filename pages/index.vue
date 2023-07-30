@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 15:01:04
+ * Last Modified: 30.07.2023 17:31:39
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,7 +18,7 @@
 
 
 <template>
-    <div class="greetings-wrapper flex flex-col items-center gap-y-16 md:gap-x-0">
+    <div class="greetings-wrapper flex flex-col items-center gap-y-16 md:gap-x-0 mt-16">
         <div class="greetings-new-name">
             <span>Dein Name:</span>
             <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
@@ -152,11 +152,8 @@
         grid-auto-flow: row;
         grid-template-areas:
             ". . ."
-            ". . ."
             ". name-input ."
-            ". existing-names ."
-            ". . ."
-            ". . .";
+            ". existing-names .";
     }
 
     .greetings-new-name {
