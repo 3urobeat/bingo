@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 15:37:29
  * Author: 3urobeat
  *
- * Last Modified: 29.07.2023 18:13:47
+ * Last Modified: 30.07.2023 13:48:01
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,13 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+
+
+/**
+ * This API route updates the user's lastActivity property and returns boolean if update was successful.
+ * Params: { name: string }
+ * Returns: "boolean"
+ */
 
 
 // This function is executed when this API route is called

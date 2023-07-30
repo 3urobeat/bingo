@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 12:32:16
+ * Last Modified: 30.07.2023 13:38:08
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -183,5 +183,4 @@
         display: inline-block;
         content: " ";
     }
-
 </style>

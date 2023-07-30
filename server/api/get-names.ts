@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 12:03:01
+ * Last Modified: 30.07.2023 13:52:41
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,13 @@
 
 import { useDatabase } from "../../composables/useDatabase";
 import { UpdateObserver } from "../updateObserver";
+
+
+/**
+ * This API route returns an event stream which is constantly updated with all names stored in the database
+ * Parameters: /
+ * Returns: "{ name: string, lastActivity: number }"
+ */
 
 
 // This function is executed when this API route is called

@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 29.07.2023 14:42:49
+ * Last Modified: 30.07.2023 13:52:22
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,13 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+
+
+/**
+ * This API route updates the user's playfield property and returns a boolean if the update was accepted.
+ * Params: { name: string, playfield: [{ id: number, content: string, strike: boolean }] }
+ * Returns: "boolean"
+ */
 
 
 // This function is executed when this API route is called

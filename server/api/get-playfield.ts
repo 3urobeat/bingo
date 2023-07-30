@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:44:03
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 12:43:16
+ * Last Modified: 30.07.2023 13:45:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,13 @@
 
 import { useDatabase } from "../../composables/useDatabase";
 // Import { UpdateObserver } from "../updateObserver";
+
+
+/**
+ * This API route returns the user's playfield data.
+ * Params: { name: string }
+ * Returns: "{ name: string, playfield: [{ id: number, content: string, strike: boolean }] }"
+ */
 
 
 // This function is executed when this API route is called

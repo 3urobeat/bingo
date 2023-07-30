@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 12:31:26
+ * Last Modified: 30.07.2023 13:37:53
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -307,5 +307,12 @@
 
     .bingo-controls-wrapper {
         grid-area: bingo-controls-wrapper;
+    }
+
+    li:before {
+        width: 21px;
+        /* height: 21px; */
+        display: inline-block;
+        content: " ";
     }
 </style>
