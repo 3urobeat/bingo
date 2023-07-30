@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 12:11:39
+ * Last Modified: 30.07.2023 12:24:39
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -103,11 +103,23 @@
 
         if (!playfieldData || playfieldData.data.value == "false") return showBingoHeaderError.value = true;
 
-        const playfield = JSON.parse(playfieldData.data.value as string).playfield;
+        const playfield: [{ id: number, content: string, strike: boolean }] = JSON.parse(playfieldData.data.value as string).playfield;
 
-        // Generate a playfield
-        for (let i = 1; i <= 9; i++) {
-            cards.value.push(playfield.find((e: { id: number }) => e.id == i));
+        // Either generate a new playfield or load an existing one
+        if (Object.keys(playfield).length == 0) {
+            console.log("Generating new playfield for this user");
+
+            for (let i = 1; i <= 9; i++) {
+                cards.value.push({ id: i, content: "", strike: false });
+            }
+
+        } else {
+
+            console.log("Loading an existing playfield for this user");
+
+            for (let i = 1; i <= Object.keys(playfield).length; i++) {
+                cards.value.push(playfield.find((e: { id: number }) => e.id == i));
+            }
         }
 
 
