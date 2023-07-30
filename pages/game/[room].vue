@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 13:37:53
+ * Last Modified: 30.07.2023 14:19:08
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -37,7 +37,9 @@
         <div class="bingo-players-list-wrapper ml-2">
             <span class="font-semibold">Active Players:</span>
             <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
-                <li v-for="thisname in names" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
+                <li class="clearfix" v-for="thisname in names" :key="thisname">
+                    {{thisname.name}} <span class="relative float-right mr-4">{{ thisname.strikesCount }}/{{ thisname.cardsCount }}</span>
+                </li>
             </ul>
         </div>
 

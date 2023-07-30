@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 13:52:22
+ * Last Modified: 30.07.2023 14:25:46
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,7 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+import { UpdateObserver } from "../updateObserver";
 
 
 /**
@@ -34,11 +35,17 @@ export default defineEventHandler(async (event) => {
 
     console.log(`API set-playfield: Received get-playfield request for '${params.name}'`);
 
+
     // Get database instance
     const db = useDatabase();
 
     // Update database record
     await db.updateAsync({ name: params.name }, { $set: { playfield: params.playfield, lastActivity: Date.now() } });
+
+
+    // Update every subscriber
+    UpdateObserver.getInstance().callSubscribers();
+
 
     return true;
 });

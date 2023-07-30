@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 13:52:41
+ * Last Modified: 30.07.2023 14:29:47
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,7 @@ import { UpdateObserver } from "../updateObserver";
 /**
  * This API route returns an event stream which is constantly updated with all names stored in the database
  * Parameters: /
- * Returns: "{ name: string, lastActivity: number }"
+ * Returns: "{ name: string, lastActivity: number, strikesCount: number, cardsCount: number }"
  */
 
 
@@ -50,7 +50,14 @@ export default defineEventHandler(async (event) => {
 
         // Remove playfield from response to keep transmitted data size relatively small
         const filtered = data.map((e) => {
-            return { name: e.name, lastActivity: e.lastActivity };
+            const obj = {
+                name: e.name,
+                lastActivity: e.lastActivity,
+                strikesCount: Object.values(e.playfield).filter((f) => f.strike).length,
+                cardsCount: Object.keys(e.playfield).length
+            };
+
+            return obj;
         });
 
         res.write(`data: ${JSON.stringify(filtered)}\n\n`);
