@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 00:05:16
+ * Last Modified: 30.07.2023 12:11:39
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -144,6 +144,18 @@
         const el = cards.value.find(e => e.id == id);
         
         el.strike = !el.strike;
+
+        // Send updated playfield to the database
+        useFetch("/api/set-playfield", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: selectedName.value,
+                playfield: cards.value
+            })
+        });
     }
 
 
@@ -154,13 +166,13 @@
         console.log("User updated card " + thiscard.id + " with content " + thiscard.content)
 
         // Send updated playfield to the database
-        await useFetch("/api/set-playfield", {
+        useFetch("/api/set-playfield", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                name: window.localStorage.selectedName,
+                name: selectedName.value,
                 playfield: cards.value
             })
         });
@@ -175,8 +187,21 @@
         if (confirm("Are you sure? This action cannot be undone!")) {
             console.log("Resetting contents");
 
+            // Clear every card
             cards.value.forEach((e) => {
                 e.content = "";
+            });
+
+            // Send updated playfield to the database
+            useFetch("/api/set-playfield", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: selectedName.value,
+                    playfield: cards.value
+                })
             });
         }
     }
@@ -199,8 +224,21 @@
         if (confirm("Are you sure? This action cannot be undone!")) {
             console.log("Resetting strikes");
 
+            // Set every card's strike property to false
             cards.value.forEach((e) => {
                 e.strike = false;
+            });
+
+            // Send updated playfield to the database
+            useFetch("/api/set-playfield", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: selectedName.value,
+                    playfield: cards.value
+                })
             });
         }
     }
