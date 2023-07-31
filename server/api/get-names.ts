@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 12:03:01
+ * Last Modified: 31.07.2023 19:57:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,16 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+import { getKnownWins } from "../../stores/storeKnownWins";
+import { getResetVotes } from "../../stores/storeResetVotes";
 import { UpdateObserver } from "../updateObserver";
+
+
+/**
+ * This API route returns an event stream which is constantly updated with all names and some data stored in the database
+ * Parameters: /
+ * Returns: "[{ name: string, lastActivity: number, lang: string, strikesCount: number, cardsCount: number, hasWon: boolean, isNewWin: boolean, hasVotedForRestart: boolean }]"
+ */
 
 
 // This function is executed when this API route is called
@@ -43,8 +52,24 @@ export default defineEventHandler(async (event) => {
 
         // Remove playfield from response to keep transmitted data size relatively small
         const filtered = data.map((e) => {
-            return { name: e.name, lastActivity: e.lastActivity };
+            const inKnownWins = !getKnownWins().includes(e.name);
+
+            // Format object to return
+            const obj = {
+                name: e.name,
+                lastActivity: e.lastActivity,
+                lang: e.lang,
+                strikesCount: Object.values(e.playfield).filter((f) => f.strike).length,
+                cardsCount: Object.keys(e.playfield).length,
+                hasWon: e.hasWon,
+                isNewWin: e.hasWon && inKnownWins,
+                hasVotedForRestart: getResetVotes().includes(e.name)
+            };
+
+            return obj;
         });
+
+        console.log("API get-names: Updating event stream with new data");
 
         res.write(`data: ${JSON.stringify(filtered)}\n\n`);
     };

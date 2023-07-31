@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 12:32:16
+ * Last Modified: 31.07.2023 16:47:12
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,18 +18,19 @@
 
 
 <template>
-    <div class="greetings-wrapper flex flex-col items-center">
+    <div class="greetings-wrapper flex flex-col items-center gap-y-16 md:gap-x-0 mt-16">
         <div class="greetings-new-name">
             <span>Dein Name:</span>
             <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
-            <button @click="play" class="greetings-new-name-play rounded-xl px-3 bg-playbtn hover:bg-lime-500">Play!</button>
+            <button @click="play" class="greetings-new-name-play rounded-xl px-3 mt-2 bg-playbtn hover:bg-green-500">Play!</button>
             <div class="greetings-new-name-error text-red-500 mt-5" v-if="showNewNameError">Error! This name is invalid or already in use!</div>
         </div>
 
         <div class="greetings-existing-name">
             <span>...oder wähle einen aus:</span>
-            <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg">
-                <li v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
+            <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg border-solid border-2 border-black">
+                <span class="ml-4" v-if="names.length == 0">No existing names found!</span>
+                <li class="ml-4" v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
             <div class="greetings-existing-name-error text-red-500 mt-5" v-if="showExistingNameError">Error! This name is already in use.</div>
         </div>
@@ -148,40 +149,18 @@
         display: grid;
         grid-auto-flow: row;
         grid-template-columns: 1fr 1fr 1fr;
-        @apply gap-y-16 md:gap-x-0;
         grid-auto-flow: row;
         grid-template-areas:
             ". . ."
-            ". . ."
             ". name-input ."
-            ". existing-names ."
-            ". . ."
-            ". . .";
+            ". existing-names .";
     }
 
     .greetings-new-name {
         grid-area: name-input;
     }
-
-    .greetings-new-name-play {
-        margin-top: 10px;
-    }
     
     .greetings-existing-name {
         grid-area: existing-names;
     }
-
-    .greetings-existing-names-list {
-        border-style: solid;
-        border-width: 3px;
-        border-color: black;
-    }
-
-    li:before {
-        width: 21px;
-        /* height: 21px; */
-        display: inline-block;
-        content: " ";
-    }
-
 </style>

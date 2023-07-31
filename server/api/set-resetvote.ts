@@ -1,10 +1,10 @@
 /*
- * File: set-lastactivity.ts
+ * File: set-resetvote.ts
  * Project: bingo
- * Created Date: 28.07.2023 15:37:29
+ * Created Date: 31.07.2023 19:15:58
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 13:48:01
+ * Last Modified: 31.07.2023 19:41:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -15,34 +15,35 @@
  */
 
 
-import { useDatabase } from "../../composables/useDatabase";
+import { addToResetVotes, removeFromResetVotes } from "../../stores/storeResetVotes";
+import { UpdateObserver } from "../updateObserver";
 
 
 /**
- * This API route updates the user's lastActivity property and returns boolean if update was successful.
- * Params: { name: string }
+ * This API route registers or unregisters a user's vote in the resetVotes store and returns boolean if update was successful.
+ * Params: { name: string, hasVotedForRestart: boolean }
  * Returns: "boolean"
  */
 
 
 // This function is executed when this API route is called
 export default defineEventHandler(async (event) => {
-    // Get database instance
-    const db = useDatabase();
 
-    // Read body of the request we received
+    // Read name from the body of the request we received
     const params = await readBody(event);
+    if (!params.name || typeof(params.hasVotedForRestart) == "undefined") return false;
 
-    console.log(`API set-activity: Updating lastActivity of user '${params.name}'`);
+    console.log(`API set-resetvote: Received set-resetvote request for '${params.name}' to '${params.hasVotedForRestart}'`);
 
-    if (params.name) {
-        // TODO: Check for invalid names
 
-        // Update database record
-        await db.updateAsync({ name: params.name }, { $set: { lastActivity: Date.now() } }, { });
+    // Update store
+    if (params.hasVotedForRestart) addToResetVotes(params.name);
+        else removeFromResetVotes(params.name);
 
-        return true;
-    }
 
-    return false;
+    // Update every subscriber
+    UpdateObserver.getInstance().callSubscribers();
+
+
+    return true;
 });

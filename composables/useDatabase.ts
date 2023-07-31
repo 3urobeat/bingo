@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:32:28
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 12:41:15
+ * Last Modified: 31.07.2023 19:27:02
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,9 @@ const database = new nedb<Player>({ filename: "./server/data/database.db", autol
 type Player = {
     name: string,
     lastActivity: number,
-    playfield: object
+    lang: string,
+    playfield: { id: number, content: string, strike: boolean }[],
+    hasWon: boolean
 };
 
 /**

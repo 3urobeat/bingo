@@ -1,10 +1,10 @@
 /*
- * File: set-lastactivity.ts
+ * File: set-language.ts
  * Project: bingo
- * Created Date: 28.07.2023 15:37:29
+ * Created Date: 30.07.2023 15:03:45
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 13:48:01
+ * Last Modified: 30.07.2023 15:17:44
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -19,8 +19,8 @@ import { useDatabase } from "../../composables/useDatabase";
 
 
 /**
- * This API route updates the user's lastActivity property and returns boolean if update was successful.
- * Params: { name: string }
+ * This API route updates the user's lang property and returns boolean if update was successful.
+ * Params: { name: string, lang: string }
  * Returns: "boolean"
  */
 
@@ -33,13 +33,13 @@ export default defineEventHandler(async (event) => {
     // Read body of the request we received
     const params = await readBody(event);
 
-    console.log(`API set-activity: Updating lastActivity of user '${params.name}'`);
+    console.log(`API set-language: Updating lang of user '${params.name}' to '${params.lang}'`);
 
-    if (params.name) {
+    if (params.lang) {
         // TODO: Check for invalid names
 
         // Update database record
-        await db.updateAsync({ name: params.name }, { $set: { lastActivity: Date.now() } }, { });
+        await db.updateAsync({ name: params.name }, { $set: { lang: params.lang } }, { });
 
         return true;
     }

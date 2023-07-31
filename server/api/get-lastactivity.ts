@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 15:42:55
  * Author: 3urobeat
  *
- * Last Modified: 28.07.2023 16:16:23
+ * Last Modified: 30.07.2023 13:43:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,13 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+
+
+/**
+ * This API route returns an object with the user's lastActivity timestamp and an isInactive boolean, indicating if the name is available.
+ * Params: { name: string }
+ * Returns: "{ lastActivity: number, isInactive: boolean }"
+ */
 
 
 // This function is executed when this API route is called

@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 29.07.2023 14:42:49
+ * Last Modified: 31.07.2023 21:23:04
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,6 +16,16 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+import { addToKnownWins, removeFromKnownWins } from "../../stores/storeKnownWins";
+import { resetResetVotes } from "../../stores/storeResetVotes";
+import { UpdateObserver } from "../updateObserver";
+
+
+/**
+ * This API route updates the user's playfield property and returns a boolean if the update was accepted.
+ * Params: { name: string, playfield: [{ id: number, content: string, strike: boolean }], hasWon?: boolean }
+ * Returns: "boolean"
+ */
 
 
 // This function is executed when this API route is called
@@ -25,13 +35,30 @@ export default defineEventHandler(async (event) => {
     const params = await readBody(event);
     if (!params.name) return false;
 
-    console.log(`API set-playfield: Received get-playfield request for '${params.name}'`);
+    // Set default hasWon if none was specified
+    if (!params.hasWon) params.hasWon = false;
+
+    console.log(`API set-playfield: Received set-playfield request for '${params.name}'`);
+
 
     // Get database instance
     const db = useDatabase();
 
     // Update database record
-    await db.updateAsync({ name: params.name }, { $set: { playfield: params.playfield, lastActivity: Date.now() } });
+    await db.updateAsync({ name: params.name }, { $set: { playfield: params.playfield, lastActivity: Date.now(), hasWon: params.hasWon } });
+
+
+    // Add name to knownWins if hasWon is true, otherwise remove it
+    if (params.hasWon) addToKnownWins(params.name);
+        else removeFromKnownWins(params.name);
+
+    // Check if we should reset all votes
+    resetResetVotes();
+
+
+    // Update every subscriber
+    UpdateObserver.getInstance().callSubscribers();
+
 
     return true;
 });

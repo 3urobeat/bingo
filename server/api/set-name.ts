@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:59:02
  * Author: 3urobeat
  *
- * Last Modified: 28.07.2023 18:55:45
+ * Last Modified: 31.07.2023 12:30:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,13 @@
 
 import { useDatabase } from "../../composables/useDatabase";
 import { UpdateObserver } from "../updateObserver";
+
+
+/**
+ * This API route inserts a record for a new user and returns a boolean if the name was accepted. Duplicate names will be rejected.
+ * Params: { name: string, lang?: string }
+ * Returns: "boolean"
+ */
 
 
 // This function is executed when this API route is called
@@ -36,13 +43,17 @@ export default defineEventHandler(async (event) => {
         if (existingNames.length > 0) return false;
 
 
+        // Set default lang if none was specified
+        if (!params.lang) params.lang = "english";
+
+
         // Upsert new database record
-        await db.insertAsync({ name: params.name, lastActivity: Date.now(), playfield: {} });
+        await db.insertAsync({ name: params.name, lastActivity: Date.now(), lang: params.lang, playfield: [], hasWon: false });
 
         console.log(`API set-name: Inserting new name '${params.name}'`);
 
 
-        // Update every name subscriber
+        // Update every subscriber
         UpdateObserver.getInstance().callSubscribers();
 
 
