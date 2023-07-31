@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:59:02
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 15:13:17
+ * Last Modified: 31.07.2023 12:30:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
 
 
         // Upsert new database record
-        await db.insertAsync({ name: params.name, lastActivity: Date.now(), lang: params.lang, playfield: [] });
+        await db.insertAsync({ name: params.name, lastActivity: Date.now(), lang: params.lang, playfield: [], hasWon: false });
 
         console.log(`API set-name: Inserting new name '${params.name}'`);
 

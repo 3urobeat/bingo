@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 14:25:46
+ * Last Modified: 31.07.2023 12:29:40
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -21,7 +21,7 @@ import { UpdateObserver } from "../updateObserver";
 
 /**
  * This API route updates the user's playfield property and returns a boolean if the update was accepted.
- * Params: { name: string, playfield: [{ id: number, content: string, strike: boolean }] }
+ * Params: { name: string, playfield: [{ id: number, content: string, strike: boolean }], hasWon?: boolean }
  * Returns: "boolean"
  */
 
@@ -33,6 +33,9 @@ export default defineEventHandler(async (event) => {
     const params = await readBody(event);
     if (!params.name) return false;
 
+    // Set default hasWon if none was specified
+    if (!params.hasWon) params.hasWon = false;
+
     console.log(`API set-playfield: Received get-playfield request for '${params.name}'`);
 
 
@@ -40,7 +43,7 @@ export default defineEventHandler(async (event) => {
     const db = useDatabase();
 
     // Update database record
-    await db.updateAsync({ name: params.name }, { $set: { playfield: params.playfield, lastActivity: Date.now() } });
+    await db.updateAsync({ name: params.name }, { $set: { playfield: params.playfield, lastActivity: Date.now(), hasWon: params.hasWon } });
 
 
     // Update every subscriber

@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:32:28
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 15:13:48
+ * Last Modified: 31.07.2023 12:04:31
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -24,7 +24,8 @@ type Player = {
     name: string,
     lastActivity: number,
     lang: string,
-    playfield: { id: number, content: string, strike: boolean }[]
+    playfield: { id: number, content: string, strike: boolean }[],
+    hasWon: boolean
 };
 
 /**

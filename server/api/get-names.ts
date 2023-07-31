@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 15:08:36
+ * Last Modified: 31.07.2023 12:04:21
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,7 @@ import { UpdateObserver } from "../updateObserver";
 /**
  * This API route returns an event stream which is constantly updated with all names and some data stored in the database
  * Parameters: /
- * Returns: "[{ name: string, lastActivity: number, lang: string, strikesCount: number, cardsCount: number }]"
+ * Returns: "[{ name: string, lastActivity: number, lang: string, strikesCount: number, cardsCount: number, hasWon: boolean }]"
  */
 
 
@@ -55,7 +55,8 @@ export default defineEventHandler(async (event) => {
                 lastActivity: e.lastActivity,
                 lang: e.lang,
                 strikesCount: Object.values(e.playfield).filter((f) => f.strike).length,
-                cardsCount: Object.keys(e.playfield).length
+                cardsCount: Object.keys(e.playfield).length,
+                hasWon: e.hasWon
             };
 
             return obj;

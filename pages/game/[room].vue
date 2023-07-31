@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 00:22:43
+ * Last Modified: 31.07.2023 12:33:58
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -43,7 +43,11 @@
             <span class="font-semibold">Active Players:</span>
             <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
                 <li class="ml-4 clearfix" v-for="thisname in names" :key="thisname">
-                    {{thisname.name}} <span class="relative float-right mr-4">{{ thisname.strikesCount }}/{{ thisname.cardsCount }}</span>
+                    {{thisname.name}} 
+                    <span class="relative float-right mr-4 pl-4">
+                        <PhTrophy v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mt-[3px] mr-2 text-yellow-500"></PhTrophy>
+                        {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
+                    </span>
                 </li>
             </ul>
         </div>
@@ -58,7 +62,7 @@
 
 
 <script setup lang="ts">
-    import { PhX } from "@phosphor-icons/vue";
+    import { PhTrophy, PhX } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
     const router   = useRouter();
@@ -153,12 +157,15 @@
 
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know
-            const res = JSON.parse(msg.data.split(" ").pop());
+            const res: any[] = JSON.parse(msg.data.split(" ").pop());
 
             // Get only names which have been active in the last 30 minutes
-            names.value = res.filter((e: {name: string, lastActivity: number}) => {
+            const filtered = res.filter((e: { name: string, lastActivity: number }) => {
                 return (Date.now() - e.lastActivity < 1.8e+6);
             });
+
+            // Update ref
+            names.value = filtered;
         })
     });
 
@@ -212,7 +219,7 @@
      * Function which gets called when the user submits card input
      */
     function cardInputUpdate() {
-        console.log("User updated their playfield, updating database")
+        console.log("User updated their playfield, updating database");
 
         // Send updated playfield to the database
         useFetch("/api/set-playfield", {
@@ -222,7 +229,8 @@
             },
             body: JSON.stringify({
                 name: selectedName.value,
-                playfield: cards.value
+                playfield: cards.value,
+                hasWon: false
             })
         });
     }
