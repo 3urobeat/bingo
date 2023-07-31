@@ -70,10 +70,10 @@
 
     // Get various refs
     const selectedName = ref(roomName);
-    const playfieldSizes = ref([{ amount: 9, str: "3x3" }, { amount: 16, str: "4x4" }, { amount: 25, str: "5x5" }, { amount: 36, str: "6x6" }]);
-    const selectedSize = ref(playfieldSizes.value[2].amount); // Use the 5x5 as default
+    const playfieldSizes: Ref<{ amount: number, str: string }[]> = ref([{ amount: 9, str: "3x3" }, { amount: 16, str: "4x4" }, { amount: 25, str: "5x5" }, { amount: 36, str: "6x6" }]);
+    const selectedSize: Ref<number> = ref(playfieldSizes.value[2].amount); // Use the 5x5 as default
     const showBingoHeaderError = ref(false);
-    const cards: Ref<any[]> = ref([]);
+    const cards: Ref<{ id: number, content: string, strike: boolean }[]> = ref([]);
     const names: Ref<any[]> = ref([]);
     const editModeActive = ref(false);
 
@@ -145,7 +145,7 @@
             console.log("Loading an existing playfield for this user");
 
             for (let i = 1; i <= Object.keys(playfield).length; i++) {
-                cards.value.push(playfield.find((e: { id: number }) => e.id == i));
+                cards.value.push(playfield.find((e) => e.id == i));
             }
         }
 
@@ -194,6 +194,8 @@
             }
         }
 
+        selectedSize.value = size.amount;
+
         cardInputUpdate();
     }
 
@@ -207,7 +209,7 @@
         console.log("User clicked card with id " + id);
 
         // Update card ref with negated strike property
-        const el = cards.value.find(e => e.id == id);
+        const el = cards.value.find(e => e.id == id) as any;
         
         el.strike = !el.strike;
 
