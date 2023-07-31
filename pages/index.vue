@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 30.07.2023 17:31:39
+ * Last Modified: 31.07.2023 16:47:12
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,7 @@
         <div class="greetings-new-name">
             <span>Dein Name:</span>
             <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
-            <button @click="play" class="greetings-new-name-play rounded-xl px-3 mt-2 bg-playbtn hover:bg-lime-500">Play!</button>
+            <button @click="play" class="greetings-new-name-play rounded-xl px-3 mt-2 bg-playbtn hover:bg-green-500">Play!</button>
             <div class="greetings-new-name-error text-red-500 mt-5" v-if="showNewNameError">Error! This name is invalid or already in use!</div>
         </div>
 

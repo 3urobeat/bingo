@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 14:03:21
+ * Last Modified: 31.07.2023 17:01:39
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -28,13 +28,36 @@
 
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
         </div>
+        
+        <div class="bingo-win-popup-wrapper absolute flex items-center justify-center w-screen h-screen bg-gray-800 bg-opacity-60 z-50" v-if="bingoWinnerPopup != ''">
+            <transition name="bingo-win-popup-modal">
+                <div class="bingo-win-popup-content flex flex-col items-center justify-center gap-10 border-2 border-black rounded-lg w-64 h-72 bg-gray-400 shadow-2xl shadow-black">
+                    <div class="bingo-win-popup-title flex font-bold text-xl">
+                        Bingo! <PhConfetti class="ml-1" size="30px"></PhConfetti>
+                    </div>
+                    
+                    <div class="bingo-win-popup-text">
+                        Player <span class="font-bold">{{ bingoWinnerPopup }}</span> won!
+                    </div>
+                    
+                    <div class="bingo-win-popup-buttons flex flex-col items-center gap-2">
+                        <button class="bingo-win-popup-buttons-continue flex border-black border-2 rounded-lg py-1 px-2 bg-gray-500 hover:bg-gray-400" @click="">
+                            <PhX class="self-center mr-1"></PhX> Continue
+                        </button>
+                        <button class="bingo-win-popup-buttons-vote border-black border-2 rounded-lg py-1 px-2 bg-playbtn hover:bg-green-500">
+                            <span class="font-bold mr-1">({{ names.filter((e) => e.votedForRestart).length }})</span> Vote Restart
+                        </button>
+                    </div>
+                </div>
+            </transition>
+        </div>
 
         <div class="bingo-playfield-wrapper grid gap-2 p-2">
             <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center bg-white p-5 text-center border-[1px] border-solid border-black" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
                 <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                     <PhX size="" fill="red"></PhX>
                 </div>
-                <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate()" v-model="thiscard.content"> <!-- Add keyup.esc to make desktop usage easier -->
+                <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate()" v-model="thiscard.content">
                 <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
             </div>
         </div>
@@ -62,7 +85,7 @@
 
 
 <script setup lang="ts">
-    import { PhTrophy, PhX } from "@phosphor-icons/vue";
+    import { PhConfetti, PhTrophy, PhX } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
     const router   = useRouter();
@@ -73,6 +96,7 @@
     const playfieldSizes: Ref<{ amount: number, str: string }[]> = ref([{ amount: 9, str: "3x3" }, { amount: 16, str: "4x4" }, { amount: 25, str: "5x5" }, { amount: 36, str: "6x6" }]);
     const selectedSize: Ref<number> = ref(playfieldSizes.value[2].amount); // Use the 5x5 as default
     const showBingoHeaderError = ref(false);
+    const bingoWinnerPopup: Ref<string> = ref(""); // String will contain the winner's name
     const cards: Ref<{ id: number, content: string, strike: boolean }[]> = ref([]);
     const names: Ref<any[]> = ref([]);
     const editModeActive = ref(false);
