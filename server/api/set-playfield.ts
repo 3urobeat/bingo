@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 18:46:39
+ * Last Modified: 31.07.2023 19:31:25
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,8 @@
  */
 
 
-import { addToKnownWins, removeFromKnownWins, useDatabase } from "../../composables/useDatabase";
+import { useDatabase } from "../../composables/useDatabase";
+import { addToKnownWins, removeFromKnownWins } from "../../stores/storeKnownWins";
 import { UpdateObserver } from "../updateObserver";
 
 
