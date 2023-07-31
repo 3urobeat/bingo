@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 21:12:10
+ * Last Modified: 31.07.2023 21:23:04
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -54,6 +54,7 @@ export default defineEventHandler(async (event) => {
 
     // Check if we should reset all votes
     resetResetVotes();
+
 
     // Update every subscriber
     UpdateObserver.getInstance().callSubscribers();
