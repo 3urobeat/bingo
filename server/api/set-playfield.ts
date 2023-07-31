@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 19:31:25
+ * Last Modified: 31.07.2023 21:12:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -17,6 +17,7 @@
 
 import { useDatabase } from "../../composables/useDatabase";
 import { addToKnownWins, removeFromKnownWins } from "../../stores/storeKnownWins";
+import { resetResetVotes } from "../../stores/storeResetVotes";
 import { UpdateObserver } from "../updateObserver";
 
 
@@ -50,6 +51,9 @@ export default defineEventHandler(async (event) => {
     // Add name to knownWins if hasWon is true, otherwise remove it
     if (params.hasWon) addToKnownWins(params.name);
         else removeFromKnownWins(params.name);
+
+    // Check if we should reset all votes
+    resetResetVotes();
 
     // Update every subscriber
     UpdateObserver.getInstance().callSubscribers();

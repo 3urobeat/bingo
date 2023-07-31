@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 19:21:50
+ * Last Modified: 31.07.2023 20:00:23
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -44,8 +44,8 @@
                         <button class="bingo-win-popup-buttons-continue flex border-black border-2 rounded-lg py-1 px-2 bg-gray-500 hover:bg-gray-400" @click="bingoWinnerPopup = ''">
                             <PhX class="self-center mr-1"></PhX> Continue
                         </button>
-                        <button class="bingo-win-popup-buttons-vote border-black border-2 rounded-lg py-1 px-2 bg-playbtn hover:bg-green-500">
-                            <span class="font-bold mr-1">({{ names.filter((e) => e.votedForRestart).length }})</span> Vote Restart
+                        <button class="bingo-win-popup-buttons-vote border-black border-2 rounded-lg py-1 px-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
+                            <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
                         </button>
                     </div>
                 </div>
@@ -75,9 +75,9 @@
                     </li>
                 </div>
 
-                <div class="flex flex-col items-center px-2" v-if="voteActive">
-                    <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-6 mb-2 bg-playbtn hover:bg-green-500">
-                        <span class="font-bold mr-1">({{ names.filter((e) => e.votedForRestart).length }})</span> Vote Restart
+                <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
+                    <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-6 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
+                        <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
                     </button>
                 </div>
             </ul>
@@ -107,7 +107,6 @@
     const bingoWinnerPopup: Ref<string> = ref(""); // String will contain the winner's name
     const cards: Ref<{ id: number, content: string, strike: boolean }[]> = ref([]);
     const names: Ref<any[]> = ref([]);
-    const voteActive = ref(false);
     const editModeActive = ref(false);
 
     let eventStream: EventSource;
@@ -321,6 +320,27 @@
             // Send updated playfield to the database
             cardInputUpdate();
         }
+    }
+
+
+    /**
+     * Function which gets called when the user clicks the "Vote Reset" button
+     * @param event DOM Button Click event
+     */
+    function voteForRestart(event: Event) {
+        bingoWinnerPopup.value = ""; // Close popup if it is open
+
+        // Send vote request to the database
+        useFetch("/api/set-resetvote", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: selectedName.value,
+                hasVotedForRestart: !names.value.find((e) => e.name == selectedName.value).hasVotedForRestart // Invert what is stored for this user
+            })
+        });
     }
 
 
