@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 17:23:45
+ * Last Modified: 31.07.2023 18:46:39
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -46,14 +46,12 @@ export default defineEventHandler(async (event) => {
     await db.updateAsync({ name: params.name }, { $set: { playfield: params.playfield, lastActivity: Date.now(), hasWon: params.hasWon } });
 
 
-    // Remove name from knownWins if hasWon is false
-    if (!params.hasWon) removeFromKnownWins(params.name);
+    // Add name to knownWins if hasWon is true, otherwise remove it
+    if (params.hasWon) addToKnownWins(params.name);
+        else removeFromKnownWins(params.name);
 
     // Update every subscriber
     UpdateObserver.getInstance().callSubscribers();
-
-    // Add name to knownWins if hasWon is true after callSubscribers is hopefully done calling everyone
-    if (params.hasWon) setTimeout(() => addToKnownWins(params.name), 1000);
 
 
     return true;

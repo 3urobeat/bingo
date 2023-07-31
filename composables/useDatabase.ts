@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:32:28
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 15:51:52
+ * Last Modified: 31.07.2023 18:48:48
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,7 +20,7 @@ import nedb from "@seald-io/nedb";
 
 const database = new nedb<Player>({ filename: "./server/data/database.db", autoload: true }); // Autoload
 
-const knownWins: string[] = []; // Collection of usernames which have had their win already broadcasted
+const knownWins: {[key: string]: number} = {}; // Collection of usernames connected to a timestamp which have won
 
 type Player = {
     name: string,
@@ -44,7 +44,7 @@ export function useDatabase() {
  * @returns knownWins array
  */
 export function getKnownWins() {
-    return knownWins;
+    return Object.keys(knownWins).filter((e) => knownWins[e] + 500 < Date.now()); // Ignore entries added in the 500ms
 }
 
 
@@ -53,7 +53,7 @@ export function getKnownWins() {
  * @param name The name to add
  */
 export function addToKnownWins(name: string) {
-    if (!knownWins.includes(name)) knownWins.push(name);
+    if (!Object.keys(knownWins).includes(name)) knownWins[name] = Date.now();
 }
 
 
@@ -62,5 +62,5 @@ export function addToKnownWins(name: string) {
  * @param name The name to remove
  */
 export function removeFromKnownWins(name: string) {
-    if (knownWins.includes(name)) knownWins.splice(knownWins.indexOf(name), 1);
+    if (Object.keys(knownWins).includes(name)) delete knownWins[name];
 }
