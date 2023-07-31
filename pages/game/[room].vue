@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 21:34:53
+ * Last Modified: 31.07.2023 21:53:38
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -69,7 +69,7 @@
                     <li class="clearfix" v-for="thisname in names" :key="thisname">
                         {{thisname.name}} 
                         <span class="relative float-right pl-4">
-                            <PhTrophy v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mt-[3px] mr-2 text-yellow-500"></PhTrophy>
+                            <PhTrophy size="20px" v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mr-4 mt-[1px] text-yellow-500"></PhTrophy>
                             {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
                         </span>
                     </li>
@@ -78,6 +78,7 @@
                 <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
                     <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-6 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
                         <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
+                        <PhCheck class="float-right -ml-10 mr-4 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
                     </button>
                 </div>
             </ul>
@@ -86,14 +87,14 @@
         <div class="bingo-controls-wrapper flex flex-col md:flex-row justify-center items-center gap-3">
             <button @click="resetContents" class="bingo-controls-reset-contents text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Content</button>
             <button @click="toggleEditMode" class="bingo-controls-toggle-edit text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 py-1 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 outline outline-white outline-2">Toggle Edit Mode</button>
-            <button @click="resetStrikes" class="bingo-controls-reset-strikes text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Strikes</button>
+            <button @click="resetStrikes()" class="bingo-controls-reset-strikes text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Strikes</button>
         </div>
     </div>
 </template>
 
 
 <script setup lang="ts">
-    import { PhConfetti, PhTrophy, PhX } from "@phosphor-icons/vue";
+    import { PhCheck, PhConfetti, PhTrophy, PhX } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
     const router   = useRouter();
