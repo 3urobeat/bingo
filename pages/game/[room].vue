@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 20:00:23
+ * Last Modified: 31.07.2023 21:34:53
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -202,6 +202,9 @@
                 if (e.isNewWin) bingoWinnerPopup.value = e.name;
             });
 
+            // Check if all active names have voted for a reset and reset strikes
+            if (filtered.every((e) => e.hasVotedForRestart)) resetStrikes(true);
+
             // Update ref
             names.value = filtered;
         })
@@ -306,10 +309,10 @@
 
     /**
      * Function which gets called when the user clicks the "Delete Strikes" button
-     * @param event DOM Button Click event
+     * @param bypassConfirmation Set to true if calling from the resetVote to bypass the confirmation popup
      */
-    function resetStrikes(event: Event) {
-        if (confirm("Are you sure? This action cannot be undone!")) {
+    function resetStrikes(bypassConfirmation: boolean = false) {
+        if (bypassConfirmation || confirm("Are you sure? This action cannot be undone!")) {
             console.log("Resetting strikes");
 
             // Set every card's strike property to false
