@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 12:04:21
+ * Last Modified: 31.07.2023 16:00:10
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -15,14 +15,14 @@
  */
 
 
-import { useDatabase } from "../../composables/useDatabase";
+import { addToKnownWins, getKnownWins, removeFromKnownWins, useDatabase } from "../../composables/useDatabase";
 import { UpdateObserver } from "../updateObserver";
 
 
 /**
  * This API route returns an event stream which is constantly updated with all names and some data stored in the database
  * Parameters: /
- * Returns: "[{ name: string, lastActivity: number, lang: string, strikesCount: number, cardsCount: number, hasWon: boolean }]"
+ * Returns: "[{ name: string, lastActivity: number, lang: string, strikesCount: number, cardsCount: number, hasWon: boolean, isNewWin: boolean }]"
  */
 
 
@@ -50,14 +50,22 @@ export default defineEventHandler(async (event) => {
 
         // Remove playfield from response to keep transmitted data size relatively small
         const filtered = data.map((e) => {
+            // Remove name from knownWins if hasWon is false
+            if (!e.hasWon) removeFromKnownWins(e.name);
+
+            // Format object to return
             const obj = {
                 name: e.name,
                 lastActivity: e.lastActivity,
                 lang: e.lang,
                 strikesCount: Object.values(e.playfield).filter((f) => f.strike).length,
                 cardsCount: Object.keys(e.playfield).length,
-                hasWon: e.hasWon
+                hasWon: e.hasWon,
+                isNewWin: e.hasWon && !getKnownWins().includes(e.name)
             };
+
+            // Add name to knownWins if hasWon is true
+            if (e.hasWon) addToKnownWins(e.name);
 
             return obj;
         });

@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:32:28
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 12:04:31
+ * Last Modified: 31.07.2023 15:51:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,6 +20,8 @@ import nedb from "@seald-io/nedb";
 
 const database = new nedb<Player>({ filename: "./server/data/database.db", autoload: true }); // Autoload
 
+const knownWins: string[] = []; // Collection of usernames which have had their win already broadcasted
+
 type Player = {
     name: string,
     lastActivity: number,
@@ -34,4 +36,31 @@ type Player = {
  */
 export function useDatabase() {
     return database;
+}
+
+
+/**
+ * Returns the list of known wins
+ * @returns knownWins array
+ */
+export function getKnownWins() {
+    return knownWins;
+}
+
+
+/**
+ * Adds a name to the list of known wins
+ * @param name The name to add
+ */
+export function addToKnownWins(name: string) {
+    if (!knownWins.includes(name)) knownWins.push(name);
+}
+
+
+/**
+ * Removes a name from the list of known wins
+ * @param name The name to remove
+ */
+export function removeFromKnownWins(name: string) {
+    if (knownWins.includes(name)) knownWins.splice(knownWins.indexOf(name), 1);
 }
