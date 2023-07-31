@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 16:00:10
+ * Last Modified: 31.07.2023 17:28:52
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -15,7 +15,7 @@
  */
 
 
-import { addToKnownWins, getKnownWins, removeFromKnownWins, useDatabase } from "../../composables/useDatabase";
+import { getKnownWins, useDatabase } from "../../composables/useDatabase";
 import { UpdateObserver } from "../updateObserver";
 
 
@@ -50,8 +50,7 @@ export default defineEventHandler(async (event) => {
 
         // Remove playfield from response to keep transmitted data size relatively small
         const filtered = data.map((e) => {
-            // Remove name from knownWins if hasWon is false
-            if (!e.hasWon) removeFromKnownWins(e.name);
+            const inKnownWins = !getKnownWins().includes(e.name);
 
             // Format object to return
             const obj = {
@@ -61,11 +60,8 @@ export default defineEventHandler(async (event) => {
                 strikesCount: Object.values(e.playfield).filter((f) => f.strike).length,
                 cardsCount: Object.keys(e.playfield).length,
                 hasWon: e.hasWon,
-                isNewWin: e.hasWon && !getKnownWins().includes(e.name)
+                isNewWin: e.hasWon && inKnownWins
             };
-
-            // Add name to knownWins if hasWon is true
-            if (e.hasWon) addToKnownWins(e.name);
 
             return obj;
         });

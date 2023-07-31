@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 17:01:39
+ * Last Modified: 31.07.2023 17:26:59
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -41,7 +41,7 @@
                     </div>
                     
                     <div class="bingo-win-popup-buttons flex flex-col items-center gap-2">
-                        <button class="bingo-win-popup-buttons-continue flex border-black border-2 rounded-lg py-1 px-2 bg-gray-500 hover:bg-gray-400" @click="">
+                        <button class="bingo-win-popup-buttons-continue flex border-black border-2 rounded-lg py-1 px-2 bg-gray-500 hover:bg-gray-400" @click="bingoWinnerPopup = ''">
                             <PhX class="self-center mr-1"></PhX> Continue
                         </button>
                         <button class="bingo-win-popup-buttons-vote border-black border-2 rounded-lg py-1 px-2 bg-playbtn hover:bg-green-500">
@@ -187,6 +187,11 @@
             // Get only names which have been active in the last 30 minutes
             const filtered = res.filter((e: { name: string, lastActivity: number }) => {
                 return (Date.now() - e.lastActivity < 1.8e+6);
+            });
+
+            // Set win popup to name of newest winner. It is very unlikely that two players finish at the same time
+            filtered.forEach((e) => {
+                if (e.isNewWin) bingoWinnerPopup.value = e.name;
             });
 
             // Update ref
