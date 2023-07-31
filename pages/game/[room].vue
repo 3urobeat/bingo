@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 17:26:59
+ * Last Modified: 31.07.2023 19:21:50
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,11 +18,11 @@
 
 
 <template>
-    <div class="absolute bingo-wrapper items-center w-screen gap-x-0 gap-y-10 md:gap-x-0 md:gap-y-16 mt-16"> <!-- mt-16 is a stupid fix to prevent it clipping into the navbar -->
+    <div class="absolute bingo-wrapper items-center w-screen gap-x-0 gap-y-10 md:gap-x-0 md:gap-y-16 mt-12"> <!-- mt-16 is a stupid fix to prevent it clipping into the navbar -->
         <div class="bingo-header-wrapper flex flex-col items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
             
-            <select class="px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700"> <!-- This v-model updates the lang ref with the selected option -->
+            <select class="px-2 py-1 mt-4 -mb-4 rounded-xl bg-gray-600 hover:bg-gray-700"> <!-- This v-model updates the lang ref with the selected option -->
                 <option v-for="thissize in playfieldSizes" @click="selectPlayfieldSize(thissize)" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
             </select>
 
@@ -65,13 +65,21 @@
         <div class="bingo-players-list-wrapper ml-2">
             <span class="font-semibold">Active Players:</span>
             <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
-                <li class="ml-4 clearfix" v-for="thisname in names" :key="thisname">
-                    {{thisname.name}} 
-                    <span class="relative float-right mr-4 pl-4">
-                        <PhTrophy v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mt-[3px] mr-2 text-yellow-500"></PhTrophy>
-                        {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
-                    </span>
-                </li>
+                <div class="ml-4 mr-4 pt-1 pb-1">
+                    <li class="clearfix" v-for="thisname in names" :key="thisname">
+                        {{thisname.name}} 
+                        <span class="relative float-right pl-4">
+                            <PhTrophy v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mt-[3px] mr-2 text-yellow-500"></PhTrophy>
+                            {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
+                        </span>
+                    </li>
+                </div>
+
+                <div class="flex flex-col items-center px-2" v-if="voteActive">
+                    <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-6 mb-2 bg-playbtn hover:bg-green-500">
+                        <span class="font-bold mr-1">({{ names.filter((e) => e.votedForRestart).length }})</span> Vote Restart
+                    </button>
+                </div>
             </ul>
         </div>
 
@@ -99,6 +107,7 @@
     const bingoWinnerPopup: Ref<string> = ref(""); // String will contain the winner's name
     const cards: Ref<{ id: number, content: string, strike: boolean }[]> = ref([]);
     const names: Ref<any[]> = ref([]);
+    const voteActive = ref(false);
     const editModeActive = ref(false);
 
     let eventStream: EventSource;
