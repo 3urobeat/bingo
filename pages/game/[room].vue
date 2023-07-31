@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 12:33:58
+ * Last Modified: 31.07.2023 12:59:51
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -112,6 +112,7 @@
                 })
             });
 
+            window.localStorage.lastActivity = Date.now();
             lastLastActivityUpdate = Date.now();
         }, 150000); // 2.5 min
 
