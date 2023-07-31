@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 12:59:51
+ * Last Modified: 31.07.2023 14:03:21
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -231,7 +231,7 @@
             body: JSON.stringify({
                 name: selectedName.value,
                 playfield: cards.value,
-                hasWon: false
+                hasWon: checkPlayfieldForWin()
             })
         });
     }
@@ -281,6 +281,80 @@
             // Send updated playfield to the database
             cardInputUpdate();
         }
+    }
+
+
+    /**
+     * Checks if this user has a Bingo (full row in x, y and xy direction) and notifies all other users
+     * @returns Boolean if this user has won
+     */
+    function checkPlayfieldForWin() { // TODO: This code is probably inefficient and shit as fuck
+        let hasWon = false;
+
+        // Calculate the amount of rows and columns we have (playfield is square)
+        let rowColAmount = Math.sqrt(selectedSize.value);
+
+
+        // Check each row for win
+        for (let row = 0; row < rowColAmount; row++) {
+            const rowIdMin = rowColAmount * row;
+            const rowIdMax = rowColAmount * (row + 1);
+
+            // Get all cards inside the [rowIdMin, rowIdMax] interval
+            const rowCards = cards.value.filter((e) => e.id > rowIdMin && e.id <= rowIdMax); // > and <= as our playfield starts at index 1 instead of 0
+
+            // Check if every element is striked
+            const rowWin = rowCards.every((e) => e.strike);
+
+            // Only update hasWon if it is not already true to avoid resetting existing win
+            if (!hasWon) hasWon = rowWin;
+        }
+
+
+        // Check each column for win
+        for (let col = 0; col < rowColAmount; col++) {
+            const colCards: any[] = [];
+
+            // Get all cards inside this column
+            for (let row = 0; row < rowColAmount; row++) {
+                const cardId = (rowColAmount * row) + col + 1; // +1 because our playfield starts at index 1 instead of 0
+
+                // Get this card and push it
+                colCards.push(cards.value.find((e) => e.id == cardId));
+            }
+
+            // Check if every element is striked
+            const colWin = colCards.every((e) => e.strike);
+
+            // Only update hasWon if it is not already true to avoid resetting existing win
+            if (!hasWon) hasWon = colWin;
+        }
+
+
+        // Check diagonale for win
+        const diagTlBrCards: any[] = []; // Top left to bottom right
+
+        for (let row = 0; row < rowColAmount; row++) { 
+            const cardId = (rowColAmount * row) + (row + 1);
+
+            diagTlBrCards.push(cards.value.find((e) => e.id == cardId));
+        }
+
+        const diagTrBlCards: any[] = []; // Top right to bottom left
+
+        for (let row = 0; row < rowColAmount; row++) {
+            const cardId = (rowColAmount * (row + 1)) - row;
+
+            diagTrBlCards.push(cards.value.find((e) => e.id == cardId));
+        }
+
+        const diagWin = diagTlBrCards.every((e) => e.strike) || diagTrBlCards.every((e) => e.strike);
+
+        if (!hasWon) hasWon = diagWin;
+
+
+        // Return result
+        return hasWon;
     }
 </script>
 
