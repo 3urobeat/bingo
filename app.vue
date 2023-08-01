@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 16:58:24
+ * Last Modified: 01.08.2023 19:38:45
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -20,13 +20,16 @@
 
 <template>
     <div class="flex flex-col h-screen w-screen bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600">
+        <button>
+            <PhSignOut class="absolute left-5 top-5" size="23px"></PhSignOut>
+        </button>
+
         <hr class="absolute h-0.5 mt-16 w-full bg-black border-0">
         <div class="absolute self-center top-1 w-21">
             <img :src="logosrc" alt="Logo"/>
         </div>
 
-        <select class="absolute right-5 top-5
-         px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700">
+        <select class="absolute right-5 top-5 px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700">
             <option value="lang-english" class="bg-gray-600 hover:bg-gray-700">🇬🇧 English</option>
             <option value="lang-german" class="bg-gray-600 hover:bg-gray-700">🇩🇪 Deutsch</option>
         </select>
@@ -51,6 +54,7 @@
 
 
 <script setup lang="ts">
+    import { PhSignOut } from "@phosphor-icons/vue";
     import logosrc from "./assets/logo.png";
     import packagejson from "./package.json";
 
