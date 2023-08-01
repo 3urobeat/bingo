@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 21:53:38
+ * Last Modified: 01.08.2023 19:56:53
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,6 +18,10 @@
 
 
 <template>
+    <button>
+        <PhSignOut class="absolute left-5 top-5" size="23px" @click="clickSignOutButton"></PhSignOut>
+    </button>
+
     <div class="absolute bingo-wrapper items-center w-screen gap-x-0 gap-y-10 md:gap-x-0 md:gap-y-16 mt-12"> <!-- mt-16 is a stupid fix to prevent it clipping into the navbar -->
         <div class="bingo-header-wrapper flex flex-col items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
@@ -94,7 +98,7 @@
 
 
 <script setup lang="ts">
-    import { PhCheck, PhConfetti, PhTrophy, PhX } from "@phosphor-icons/vue";
+    import { PhSignOut, PhCheck, PhConfetti, PhTrophy, PhX } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
     const router   = useRouter();
@@ -419,6 +423,30 @@
 
         // Return result
         return hasWon;
+    }
+
+
+    /**
+     * Function which gets called when the user clicks the "Sign Out" button
+     */
+    function clickSignOutButton() {
+        // Reset lastActivity
+        useFetch("/api/set-lastactivity", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: selectedName.value,
+                lastActivity: 0
+            })
+        });
+
+        window.localStorage.selectedName = "";
+        window.localStorage.lastActivity = 0;
+
+        // Route user to index
+        router.push({ path: "/" });
     }
 </script>
 
