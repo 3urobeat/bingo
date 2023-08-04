@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 16:47:12
+ * Last Modified: 04.08.2023 19:54:09
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,17 +18,17 @@
 
 
 <template>
-    <div class="greetings-wrapper flex flex-col items-center gap-y-16 md:gap-x-0 mt-16">
-        <div class="greetings-new-name">
-            <span>Dein Name:</span>
+    <div class="greetings-wrapper items-center gap-y-16 md:gap-x-0 mt-16">
+        <div class="greetings-new-name flex flex-col items-center gap-2">
+            <span class="text-lg">Dein Name:</span>
             <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
-            <button @click="play" class="greetings-new-name-play rounded-xl px-3 mt-2 bg-playbtn hover:bg-green-500">Play!</button>
+            <button @click="play" class="greetings-new-name-play rounded-lg py-[1px] px-7 bg-playbtn hover:bg-green-500">Play!</button>
             <div class="greetings-new-name-error text-red-500 mt-5" v-if="showNewNameError">Error! This name is invalid or already in use!</div>
         </div>
 
         <div class="greetings-existing-name">
             <span>...oder wähle einen aus:</span>
-            <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg border-solid border-2 border-black">
+            <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg p-1 border-solid border-2 border-black">
                 <span class="ml-4" v-if="names.length == 0">No existing names found!</span>
                 <li class="ml-4" v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>

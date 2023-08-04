@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 04.08.2023 19:16:12
+ * Last Modified: 04.08.2023 20:49:40
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,18 +22,18 @@
         <PhSignOut class="absolute left-5 top-5" size="23px" @click="clickSignOutButton"></PhSignOut>
     </button>
 
-    <div class="absolute bingo-wrapper items-center w-screen gap-x-0 gap-y-10 md:gap-x-0 md:gap-y-16 mt-12"> <!-- mt-16 is a stupid fix to prevent it clipping into the navbar -->
-        <div class="bingo-header-wrapper flex flex-col items-center">
+    <div class="bingo-wrapper flex flex-col justify-evenly items-center h-full">
+        <div class="bingo-header-wrapper flex flex-col gap-2 items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
             
-            <select class="px-2 py-1 mt-4 -mb-4 rounded-xl bg-gray-600 hover:bg-gray-700"> <!-- This v-model updates the lang ref with the selected option -->
+            <select class="px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700"> <!-- This v-model updates the lang ref with the selected option -->
                 <option v-for="thissize in playfieldSizes" @click="selectPlayfieldSize(thissize)" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
             </select>
 
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
         </div>
         
-        <div class="bingo-win-popup-wrapper absolute flex items-center justify-center w-screen h-screen bg-gray-800 bg-opacity-60 z-50" v-if="bingoWinnerPopup != ''">
+        <div class="bingo-win-popup-wrapper absolute flex items-center justify-center inset-0 bg-gray-800 bg-opacity-60 z-50" v-if="bingoWinnerPopup != ''">
             <transition name="bingo-win-popup-modal">
                 <div class="bingo-win-popup-content flex flex-col items-center justify-center gap-10 border-2 border-black rounded-lg w-64 h-72 bg-gray-400 shadow-2xl shadow-black">
                     <div class="bingo-win-popup-title flex font-bold text-xl">
@@ -56,36 +56,38 @@
             </transition>
         </div>
 
-        <div class="bingo-playfield-wrapper gap-2">
-            <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center bg-white p-5 text-center border-[1px] border-solid border-black" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id.toString()">
-                <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
-                    <PhX size="" fill="red"></PhX>
+        <div class="flex flex-col gap-4 md:flex-row items-center">
+            <div class="bingo-playfield-wrapper grid gap-1 md:gap-2">
+                <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square bg-white text-center border-[1px] border-solid border-black rounded-lg shadow-2xl" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id.toString()">
+                    <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
+                        <PhX class="h-full w-full" fill="red"></PhX>
+                    </div>
+                    <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate()" v-model="thiscard.content">
+                    <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
                 </div>
-                <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate()" v-model="thiscard.content">
-                <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
             </div>
-        </div>
 
-        <div class="bingo-players-list-wrapper ml-2">
-            <span class="font-semibold">Active Players:</span>
-            <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
-                <div class="ml-4 mr-4 pt-1 pb-1">
-                    <li class="clearfix" v-for="thisname in names" :key="thisname">
-                        {{thisname.name}} 
-                        <span class="relative float-right pl-4">
-                            <PhTrophy size="20px" v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mr-4 mt-[1px] text-yellow-500"></PhTrophy>
-                            {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
-                        </span>
-                    </li>
-                </div>
+            <div class="bingo-players-list-wrapper">
+                <span class="font-semibold">Active Players:</span>
+                <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
+                    <div class="ml-4 mr-4 pt-1 pb-1">
+                        <li class="clearfix" v-for="thisname in names" :key="thisname">
+                            {{thisname.name}} 
+                            <span class="relative float-right pl-4">
+                                <PhTrophy size="20px" v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mr-4 mt-[1px] text-yellow-500"></PhTrophy>
+                                {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
+                            </span>
+                        </li>
+                    </div>
 
-                <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
-                    <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-6 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
-                        <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
-                        <PhCheck class="float-right -ml-10 mr-4 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
-                    </button>
-                </div>
-            </ul>
+                    <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
+                        <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-6 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
+                            <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
+                            <PhCheck class="float-right -ml-10 mr-4 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
+                        </button>
+                    </div>
+                </ul>
+            </div>
         </div>
 
         <div class="bingo-controls-wrapper flex flex-col md:flex-row justify-center items-center gap-3">
@@ -453,36 +455,7 @@
 
 
 <style>
-    .bingo-wrapper {
-        display: grid;
-        grid-auto-flow: row;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-auto-flow: row;
-        grid-template-areas:
-            ". . ."
-            ". bingo-header-wrapper ."
-            ". bingo-playfield-wrapper bingo-players-list-wrapper"
-            ". bingo-controls-wrapper ."
-            ". . .";
-    }
-
-    .bingo-header-wrapper {
-        grid-area: bingo-header-wrapper;
-    }
-
     .bingo-playfield-wrapper {
-        grid-area: bingo-playfield-wrapper;
-
-        display: grid;
-        justify-content: center;
         grid-template-columns: repeat(v-bind(selectedSizeSqrt), auto);
-    }
-
-    .bingo-players-list-wrapper {
-        grid-area: bingo-players-list-wrapper;
-    }
-
-    .bingo-controls-wrapper {
-        grid-area: bingo-controls-wrapper;
     }
 </style>
