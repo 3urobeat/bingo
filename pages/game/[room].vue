@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 01.08.2023 19:56:53
+ * Last Modified: 04.08.2023 18:42:29
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -56,7 +56,7 @@
             </transition>
         </div>
 
-        <div class="bingo-playfield-wrapper grid gap-2 p-2">
+        <div class="bingo-playfield-wrapper gap-2">
             <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center bg-white p-5 text-center border-[1px] border-solid border-black" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
                 <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                     <PhX size="" fill="red"></PhX>
@@ -113,6 +113,8 @@
     const cards: Ref<{ id: number, content: string, strike: boolean }[]> = ref([]);
     const names: Ref<any[]> = ref([]);
     const editModeActive = ref(false);
+
+    const selectedSizeSqrt = computed(() => Math.sqrt(selectedSize.value)); // For CSS playfield-wrapper
 
     let eventStream: EventSource;
     let updateLastActivityInterval: NodeJS.Timer;
@@ -471,7 +473,10 @@
 
     .bingo-playfield-wrapper {
         grid-area: bingo-playfield-wrapper;
-        grid-template-columns: auto auto auto;
+
+        display: grid;
+        justify-content: center;
+        grid-template-columns: repeat(v-bind(selectedSizeSqrt), auto);
     }
 
     .bingo-players-list-wrapper {
