@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 04.08.2023 18:42:29
+ * Last Modified: 04.08.2023 19:16:12
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -57,7 +57,7 @@
         </div>
 
         <div class="bingo-playfield-wrapper gap-2">
-            <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center bg-white p-5 text-center border-[1px] border-solid border-black" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
+            <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center bg-white p-5 text-center border-[1px] border-solid border-black" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id.toString()">
                 <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                     <PhX size="" fill="red"></PhX>
                 </div>
@@ -184,7 +184,7 @@
             console.log("Loading an existing playfield for this user");
 
             for (let i = 1; i <= Object.keys(playfield).length; i++) {
-                cards.value.push(playfield.find((e) => e.id == i));
+                cards.value.push(playfield.find((e) => e.id == i)!);
             }
         }
 
@@ -193,7 +193,7 @@
 
 
         // Get an event stream to update the names list on change
-        eventStream = useEventStream("get-names");
+        eventStream = useEventStream("get-names")!;
 
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know
@@ -335,9 +335,8 @@
 
     /**
      * Function which gets called when the user clicks the "Vote Reset" button
-     * @param event DOM Button Click event
      */
-    function voteForRestart(event: Event) {
+    function voteForRestart() {
         bingoWinnerPopup.value = ""; // Close popup if it is open
 
         // Send vote request to the database
