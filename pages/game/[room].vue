@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 12:42:34
+ * Last Modified: 05.08.2023 12:53:47
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,28 +22,28 @@
         <PhSignOut class="absolute left-5 top-5" size="23px" @click="clickSignOutButton"></PhSignOut>
     </button>
 
-    <div class="bingo-wrapper flex flex-col justify-evenly items-center h-full">
+    <div class="bingo-wrapper flex flex-col justify-evenly items-center h-full gap-2 md:gap-0">
         <div class="bingo-header-wrapper flex flex-col gap-2 items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
-            
+
             <select class="px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700" @change="selectPlayfieldSize" v-model="selectedSize">
                 <option v-for="thissize in playfieldSizes" :value="thissize.amount" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
             </select>
 
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
         </div>
-        
+
         <div class="bingo-win-popup-wrapper absolute flex items-center justify-center inset-0 bg-gray-800 bg-opacity-60 z-50" v-if="bingoWinnerPopup != ''">
             <transition name="bingo-win-popup-modal">
                 <div class="bingo-win-popup-content flex flex-col items-center justify-center gap-10 border-2 border-black rounded-lg w-64 h-72 bg-gray-400 shadow-2xl shadow-black">
                     <div class="bingo-win-popup-title flex font-bold text-xl">
                         Bingo! <PhConfetti class="ml-1" size="30px"></PhConfetti>
                     </div>
-                    
+
                     <div class="bingo-win-popup-text">
                         Player <span class="font-bold">{{ bingoWinnerPopup }}</span> won!
                     </div>
-                    
+
                     <div class="bingo-win-popup-buttons flex flex-col items-center gap-2">
                         <button class="bingo-win-popup-buttons-continue flex border-black border-2 rounded-lg py-1 px-2 bg-gray-500 hover:bg-gray-400" @click="bingoWinnerPopup = ''">
                             <PhX class="self-center mr-1"></PhX> Continue
@@ -58,7 +58,7 @@
 
         <div class="flex flex-col gap-4 md:flex-row items-center">
             <div class="bingo-playfield-wrapper grid gap-1 md:gap-2">
-                <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square bg-white text-center border-[1px] border-solid border-black rounded-lg shadow-2xl" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id.toString()">
+                <div class="bingo-playfield-card flex flex-col relative justify-center w-20 md:w-40 h-20 md:h-40 aspect-square bg-white text-center border-[1px] border-solid border-black rounded-lg shadow-2xl" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id.toString()">
                     <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                         <PhX class="h-full w-full" fill="red"></PhX>
                     </div>
@@ -69,7 +69,7 @@
 
             <div class="bingo-players-list-wrapper">
                 <span class="font-semibold">Active Players:</span>
-                <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
+                <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 w-full outline outline-black outline-2">
                     <div class="ml-4 mr-4 pt-1 pb-1">
                         <li class="clearfix" v-for="thisname in names" :key="thisname">
                             {{thisname.name}} 
@@ -81,9 +81,9 @@
                     </div>
 
                     <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
-                        <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-6 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
+                        <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-2 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
                             <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
-                            <PhCheck class="float-right -ml-10 mr-4 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
+                            <PhCheck class="float-right mr-2 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
                         </button>
                     </div>
                 </ul>
@@ -229,7 +229,7 @@
     /**
      * Function which gets called when the user selects a (different) playfield size
      */
-    function selectPlayfieldSize(event: Event) { // size: { amount: number, str: string }
+    function selectPlayfieldSize() {
 
         // Display warning if the playfield size shrinks
         if (selectedSize.value < cards.value.length) {
@@ -290,9 +290,8 @@
 
     /**
      * Function which gets called when the user clicks the "Delete Contents" button
-     * @param event DOM Button Click event
      */
-    function resetContents(event: Event) {
+    function resetContents() {
         if (confirm("Are you sure? This action cannot be undone!")) {
             console.log("Resetting contents");
 
@@ -310,7 +309,7 @@
     /**
      * Function which gets called when the user clicks the "Toggle Edit Mode" button
      */
-    function toggleEditMode(thiscard: any) {
+    function toggleEditMode() {
         console.log("Toggling edit mode");
         editModeActive.value = !editModeActive.value;
     }

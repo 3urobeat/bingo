@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 04.08.2023 20:42:01
+ * Last Modified: 05.08.2023 12:48:51
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -21,7 +21,7 @@
 <template>
     <div class="flex flex-col items-center justify-between h-screen w-screen overflow-y-hidden bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600">
         <nav class="flex justify-center">
-            <div class="top-1 w-21">
+            <div class="pt-2 w-28">
                 <img :src="logosrc" alt="Logo"/>
             </div>
             <hr class="absolute h-0.5 mt-16 w-full bg-black border-0">
