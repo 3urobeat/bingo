@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:59:02
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 12:30:10
+ * Last Modified: 05.08.2023 15:42:06
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -35,7 +35,8 @@ export default defineEventHandler(async (event) => {
     const params = await readBody(event);
 
     if (params.name) {
-        // TODO: Check for invalid names
+        // Check for invalid names and reject request
+        if (!/^[A-Za-z][A-Za-z0-9_]{1,33}$/.test(params.name) || ["undefined", "null"].includes(params.name)) return false;
 
         // Check for existing record and reject request
         const existingNames = await db.findAsync({ name: params.name });

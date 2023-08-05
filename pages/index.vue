@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 10:34:33
+ * Last Modified: 05.08.2023 15:43:13
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,7 @@
             <span class="text-lg">Dein Name:</span>
             <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
             <button @click="play" class="greetings-new-name-play rounded-lg py-[1px] px-7 bg-playbtn hover:bg-green-500">Play!</button>
-            <div class="greetings-new-name-error text-red-500 mt-5" v-if="showNewNameError">Error! This name is invalid or already in use!</div>
+            <div class="greetings-new-name-error text-red-500 mt-5" v-if="showNewNameError">Error! This name is invalid or already in use! Names must be 2-32 alphanumeric characters long.</div>
         </div>
 
         <div class="greetings-existing-name">
