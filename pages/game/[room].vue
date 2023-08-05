@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 12:53:47
+ * Last Modified: 05.08.2023 15:17:54
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -58,12 +58,12 @@
 
         <div class="flex flex-col gap-4 md:flex-row items-center">
             <div class="bingo-playfield-wrapper grid gap-1 md:gap-2">
-                <div class="bingo-playfield-card flex flex-col relative justify-center w-20 md:w-40 h-20 md:h-40 aspect-square bg-white text-center border-[1px] border-solid border-black rounded-lg shadow-2xl" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id.toString()">
+                <div class="bingo-playfield-card flex flex-col relative justify-center w-20 md:w-36 h-20 md:h-36 aspect-square bg-white text-center border-[1px] border-solid border-black rounded-lg shadow-2xl" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id.toString()">
                     <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
                         <PhX class="h-full w-full" fill="red"></PhX>
                     </div>
                     <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate()" v-model="thiscard.content">
-                    <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
+                    <span class="rounded-lg select-none text-xs md:text-base" v-if="!editModeActive">{{ thiscard.content }}</span>
                 </div>
             </div>
 
