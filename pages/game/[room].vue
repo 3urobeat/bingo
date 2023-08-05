@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 12:09:00
+ * Last Modified: 05.08.2023 12:42:34
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -26,8 +26,8 @@
         <div class="bingo-header-wrapper flex flex-col gap-2 items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
             
-            <select class="px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700"> <!-- This v-model updates the lang ref with the selected option -->
-                <option v-for="thissize in playfieldSizes" @click="selectPlayfieldSize(thissize)" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
+            <select class="px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700" @change="selectPlayfieldSize" v-model="selectedSize">
+                <option v-for="thissize in playfieldSizes" :value="thissize.amount" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
             </select>
 
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
@@ -229,23 +229,23 @@
     /**
      * Function which gets called when the user selects a (different) playfield size
      */
-    function selectPlayfieldSize(size: { amount: number, str: string }) {
-        console.log("User selected playfield size " + size.str);
+    function selectPlayfieldSize(event: Event) { // size: { amount: number, str: string }
 
         // Display warning if the playfield size shrinks
-        if (size.amount < cards.value.length) {
+        if (selectedSize.value < cards.value.length) {
             if (confirm("Shrinking your playfield will loose data! Are you sure?")) {
-                cards.value.splice(size.amount, cards.value.length - size.amount); // Remove cards from the end to reach new size
+                cards.value.splice(selectedSize.value, cards.value.length - selectedSize.value); // Remove cards from the end to reach new size
             }
         } else {
-            for (let i = cards.value.length + 1; i <= size.amount; i++) {
+            for (let i = cards.value.length + 1; i <= selectedSize.value; i++) {
                 cards.value.push({ id: i, content: "", strike: false }); // Push new cards to the end to reach new size
             }
         }
 
-        selectedSize.value = size.amount;
+        selectedSize.value = selectedSize.value;
 
         cardInputUpdate();
+
     }
 
 
