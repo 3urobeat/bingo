@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 15:29:23
+ * Last Modified: 05.08.2023 18:10:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <div class="bingo-players-list-wrapper">
+            <div class="bingo-players-list-wrapper" v-if="listButtonsSwitch">
                 <span class="font-semibold">Active Players:</span>
                 <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 w-full outline outline-black outline-2">
                     <div class="ml-4 mr-4 pt-1 pb-1">
@@ -90,7 +90,11 @@
             </div>
         </div>
 
-        <div class="bingo-controls-wrapper flex flex-col md:flex-row justify-center items-center gap-3">
+        <button class="flex text-sm items-center gap-2 rounded-full px-2 text-gray-400 bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 text-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 bg-opacity-60" @click="listButtonsSwitch = !listButtonsSwitch">
+            <PhList></PhList> Toggle List and Buttons
+        </button>
+
+        <div class="bingo-controls-wrapper flex flex-col md:flex-row justify-center items-center text-xs md:text-base gap-3" v-if="!listButtonsSwitch">
             <button @click="resetContents" class="bingo-controls-reset-contents text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Content</button>
             <button @click="toggleEditMode" class="bingo-controls-toggle-edit text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 py-1 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 outline outline-white outline-2">Toggle Edit Mode</button>
             <button @click="resetStrikes()" class="bingo-controls-reset-strikes text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Strikes</button>
@@ -100,7 +104,7 @@
 
 
 <script setup lang="ts">
-    import { PhSignOut, PhCheck, PhConfetti, PhTrophy, PhX } from "@phosphor-icons/vue";
+    import { PhSignOut, PhCheck, PhConfetti, PhTrophy, PhX, PhList } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
     const router   = useRouter();
