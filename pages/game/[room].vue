@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 31.07.2023 21:53:38
+ * Last Modified: 05.08.2023 18:10:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -18,28 +18,32 @@
 
 
 <template>
-    <div class="absolute bingo-wrapper items-center w-screen gap-x-0 gap-y-10 md:gap-x-0 md:gap-y-16 mt-12"> <!-- mt-16 is a stupid fix to prevent it clipping into the navbar -->
-        <div class="bingo-header-wrapper flex flex-col items-center">
+    <button>
+        <PhSignOut class="absolute left-5 top-5" size="23px" @click="clickSignOutButton"></PhSignOut>
+    </button>
+
+    <div class="bingo-wrapper flex flex-col justify-evenly items-center h-full gap-2 md:gap-0">
+        <div class="bingo-header-wrapper flex flex-col gap-2 items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
-            
-            <select class="px-2 py-1 mt-4 -mb-4 rounded-xl bg-gray-600 hover:bg-gray-700"> <!-- This v-model updates the lang ref with the selected option -->
-                <option v-for="thissize in playfieldSizes" @click="selectPlayfieldSize(thissize)" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
+
+            <select class="px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700" @change="selectPlayfieldSize" v-model="selectedSize">
+                <option v-for="thissize in playfieldSizes" :value="thissize.amount" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
             </select>
 
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
         </div>
-        
-        <div class="bingo-win-popup-wrapper absolute flex items-center justify-center w-screen h-screen bg-gray-800 bg-opacity-60 z-50" v-if="bingoWinnerPopup != ''">
+
+        <div class="bingo-win-popup-wrapper absolute flex items-center justify-center inset-0 bg-gray-800 bg-opacity-60 z-50" v-if="bingoWinnerPopup != ''">
             <transition name="bingo-win-popup-modal">
                 <div class="bingo-win-popup-content flex flex-col items-center justify-center gap-10 border-2 border-black rounded-lg w-64 h-72 bg-gray-400 shadow-2xl shadow-black">
                     <div class="bingo-win-popup-title flex font-bold text-xl">
                         Bingo! <PhConfetti class="ml-1" size="30px"></PhConfetti>
                     </div>
-                    
+
                     <div class="bingo-win-popup-text">
                         Player <span class="font-bold">{{ bingoWinnerPopup }}</span> won!
                     </div>
-                    
+
                     <div class="bingo-win-popup-buttons flex flex-col items-center gap-2">
                         <button class="bingo-win-popup-buttons-continue flex border-black border-2 rounded-lg py-1 px-2 bg-gray-500 hover:bg-gray-400" @click="bingoWinnerPopup = ''">
                             <PhX class="self-center mr-1"></PhX> Continue
@@ -52,39 +56,45 @@
             </transition>
         </div>
 
-        <div class="bingo-playfield-wrapper grid gap-2 p-2">
-            <div class="bingo-playfield-card relative w-20 md:w-40 h-20 md:h-40 aspect-square flex items-center justify-center bg-white p-5 text-center border-[1px] border-solid border-black" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id">
-                <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
-                    <PhX size="" fill="red"></PhX>
+        <div class="flex flex-col gap-4 md:flex-row items-center">
+            <div class="bingo-playfield-wrapper grid gap-1 md:gap-2">
+                <div class="bingo-playfield-card flex flex-col relative justify-center w-20 md:w-36 h-20 md:h-36 aspect-square bg-white text-center border-[1px] border-solid border-black rounded-lg shadow-2xl" @click.capture="cardClick(thiscard.id)" v-for="thiscard in cards" :id="thiscard.id.toString()">
+                    <div class="absolute inset-0 flex items-center justify-center" v-if="thiscard.strike && !editModeActive">
+                        <PhX class="h-full w-full" fill="red"></PhX>
+                    </div>
+                    <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate()" v-model="thiscard.content">
+                    <span class="rounded-lg select-none text-xs md:text-base" v-if="!editModeActive">{{ thiscard.content }}</span>
                 </div>
-                <input type="text" class="rounded-lg w-full bg-gray-200" v-if="editModeActive" @focusout="cardInputUpdate()" v-model="thiscard.content">
-                <span class="rounded-lg select-none" v-if="!editModeActive">{{ thiscard.content }}</span>
+            </div>
+
+            <div class="bingo-players-list-wrapper" v-if="listButtonsSwitch">
+                <span class="font-semibold">Active Players:</span>
+                <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 w-full outline outline-black outline-2">
+                    <div class="ml-4 mr-4 pt-1 pb-1">
+                        <li class="clearfix" v-for="thisname in names" :key="thisname">
+                            {{thisname.name}} 
+                            <span class="relative float-right pl-4">
+                                <PhTrophy size="20px" v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mr-4 mt-[1px] text-yellow-500"></PhTrophy>
+                                {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
+                            </span>
+                        </li>
+                    </div>
+
+                    <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
+                        <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-2 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
+                            <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
+                            <PhCheck class="float-right mr-2 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
+                        </button>
+                    </div>
+                </ul>
             </div>
         </div>
 
-        <div class="bingo-players-list-wrapper ml-2">
-            <span class="font-semibold">Active Players:</span>
-            <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 max-w-xs outline outline-black outline-2">
-                <div class="ml-4 mr-4 pt-1 pb-1">
-                    <li class="clearfix" v-for="thisname in names" :key="thisname">
-                        {{thisname.name}} 
-                        <span class="relative float-right pl-4">
-                            <PhTrophy size="20px" v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mr-4 mt-[1px] text-yellow-500"></PhTrophy>
-                            {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
-                        </span>
-                    </li>
-                </div>
+        <button class="flex text-sm items-center gap-2 rounded-full px-2 text-gray-400 bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 text-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 bg-opacity-60" @click="listButtonsSwitch = !listButtonsSwitch">
+            <PhList></PhList> Toggle List and Buttons
+        </button>
 
-                <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
-                    <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-6 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
-                        <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
-                        <PhCheck class="float-right -ml-10 mr-4 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
-                    </button>
-                </div>
-            </ul>
-        </div>
-
-        <div class="bingo-controls-wrapper flex flex-col md:flex-row justify-center items-center gap-3">
+        <div class="bingo-controls-wrapper flex flex-col md:flex-row justify-center items-center text-xs md:text-base gap-3" v-if="!listButtonsSwitch">
             <button @click="resetContents" class="bingo-controls-reset-contents text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Content</button>
             <button @click="toggleEditMode" class="bingo-controls-toggle-edit text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 py-1 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 outline outline-white outline-2">Toggle Edit Mode</button>
             <button @click="resetStrikes()" class="bingo-controls-reset-strikes text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Strikes</button>
@@ -94,7 +104,7 @@
 
 
 <script setup lang="ts">
-    import { PhCheck, PhConfetti, PhTrophy, PhX } from "@phosphor-icons/vue";
+    import { PhSignOut, PhCheck, PhConfetti, PhTrophy, PhX, PhList } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
     const router   = useRouter();
@@ -109,6 +119,9 @@
     const cards: Ref<{ id: number, content: string, strike: boolean }[]> = ref([]);
     const names: Ref<any[]> = ref([]);
     const editModeActive = ref(false);
+    const listButtonsSwitch = ref(false);
+
+    const selectedSizeSqrt = computed(() => Math.sqrt(selectedSize.value)); // For CSS playfield-wrapper
 
     let eventStream: EventSource;
     let updateLastActivityInterval: NodeJS.Timer;
@@ -178,16 +191,16 @@
             console.log("Loading an existing playfield for this user");
 
             for (let i = 1; i <= Object.keys(playfield).length; i++) {
-                cards.value.push(playfield.find((e) => e.id == i));
+                cards.value.push(playfield.find((e) => e.id == i)!);
             }
         }
 
         // Select the correct size in the dropdown
-        selectedSize.value = Object.keys(playfield).length;
+        selectedSize.value = cards.value.length;
 
 
         // Get an event stream to update the names list on change
-        eventStream = useEventStream("get-names");
+        eventStream = useEventStream("get-names")!;
 
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know
@@ -213,31 +226,33 @@
 
 
     // Clean up when the page is unmounted
-    onUnmounted(() => {
+    /* onDeactivated(() => {
         clearInterval(updateLastActivityInterval);
-    });
+
+        eventStream.close();
+    }); */
 
 
     /**
      * Function which gets called when the user selects a (different) playfield size
      */
-    function selectPlayfieldSize(size: { amount: number, str: string }) {
-        console.log("User selected playfield size " + size.str);
+    function selectPlayfieldSize() {
 
         // Display warning if the playfield size shrinks
-        if (size.amount < cards.value.length) {
+        if (selectedSize.value < cards.value.length) {
             if (confirm("Shrinking your playfield will loose data! Are you sure?")) {
-                cards.value.splice(size.amount, cards.value.length - size.amount); // Remove cards from the end to reach new size
+                cards.value.splice(selectedSize.value, cards.value.length - selectedSize.value); // Remove cards from the end to reach new size
             }
         } else {
-            for (let i = cards.value.length + 1; i <= size.amount; i++) {
+            for (let i = cards.value.length + 1; i <= selectedSize.value; i++) {
                 cards.value.push({ id: i, content: "", strike: false }); // Push new cards to the end to reach new size
             }
         }
 
-        selectedSize.value = size.amount;
+        selectedSize.value = selectedSize.value;
 
         cardInputUpdate();
+
     }
 
 
@@ -273,8 +288,7 @@
             },
             body: JSON.stringify({
                 name: selectedName.value,
-                playfield: cards.value,
-                hasWon: checkPlayfieldForWin()
+                playfield: cards.value
             })
         });
     }
@@ -282,9 +296,8 @@
 
     /**
      * Function which gets called when the user clicks the "Delete Contents" button
-     * @param event DOM Button Click event
      */
-    function resetContents(event: Event) {
+    function resetContents() {
         if (confirm("Are you sure? This action cannot be undone!")) {
             console.log("Resetting contents");
 
@@ -302,7 +315,7 @@
     /**
      * Function which gets called when the user clicks the "Toggle Edit Mode" button
      */
-    function toggleEditMode(thiscard: any) {
+    function toggleEditMode() {
         console.log("Toggling edit mode");
         editModeActive.value = !editModeActive.value;
     }
@@ -329,9 +342,8 @@
 
     /**
      * Function which gets called when the user clicks the "Vote Reset" button
-     * @param event DOM Button Click event
      */
-    function voteForRestart(event: Event) {
+    function voteForRestart() {
         bingoWinnerPopup.value = ""; // Close popup if it is open
 
         // Send vote request to the database
@@ -349,108 +361,32 @@
 
 
     /**
-     * Checks if this user has a Bingo (full row in x, y and xy direction) and notifies all other users
-     * @returns Boolean if this user has won
+     * Function which gets called when the user clicks the "Sign Out" button
      */
-    function checkPlayfieldForWin() { // TODO: This code is probably inefficient and shit as fuck
-        let hasWon = false;
+    function clickSignOutButton() {
+        // Reset lastActivity
+        useFetch("/api/set-lastactivity", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: selectedName.value,
+                lastActivity: 0
+            })
+        });
 
-        // Calculate the amount of rows and columns we have (playfield is square)
-        let rowColAmount = Math.sqrt(selectedSize.value);
+        window.localStorage.selectedName = "";
+        window.localStorage.lastActivity = 0;
 
-
-        // Check each row for win
-        for (let row = 0; row < rowColAmount; row++) {
-            const rowIdMin = rowColAmount * row;
-            const rowIdMax = rowColAmount * (row + 1);
-
-            // Get all cards inside the [rowIdMin, rowIdMax] interval
-            const rowCards = cards.value.filter((e) => e.id > rowIdMin && e.id <= rowIdMax); // > and <= as our playfield starts at index 1 instead of 0
-
-            // Check if every element is striked
-            const rowWin = rowCards.every((e) => e.strike);
-
-            // Only update hasWon if it is not already true to avoid resetting existing win
-            if (!hasWon) hasWon = rowWin;
-        }
-
-
-        // Check each column for win
-        for (let col = 0; col < rowColAmount; col++) {
-            const colCards: any[] = [];
-
-            // Get all cards inside this column
-            for (let row = 0; row < rowColAmount; row++) {
-                const cardId = (rowColAmount * row) + col + 1; // +1 because our playfield starts at index 1 instead of 0
-
-                // Get this card and push it
-                colCards.push(cards.value.find((e) => e.id == cardId));
-            }
-
-            // Check if every element is striked
-            const colWin = colCards.every((e) => e.strike);
-
-            // Only update hasWon if it is not already true to avoid resetting existing win
-            if (!hasWon) hasWon = colWin;
-        }
-
-
-        // Check diagonale for win
-        const diagTlBrCards: any[] = []; // Top left to bottom right
-
-        for (let row = 0; row < rowColAmount; row++) { 
-            const cardId = (rowColAmount * row) + (row + 1);
-
-            diagTlBrCards.push(cards.value.find((e) => e.id == cardId));
-        }
-
-        const diagTrBlCards: any[] = []; // Top right to bottom left
-
-        for (let row = 0; row < rowColAmount; row++) {
-            const cardId = (rowColAmount * (row + 1)) - row;
-
-            diagTrBlCards.push(cards.value.find((e) => e.id == cardId));
-        }
-
-        const diagWin = diagTlBrCards.every((e) => e.strike) || diagTrBlCards.every((e) => e.strike);
-
-        if (!hasWon) hasWon = diagWin;
-
-
-        // Return result
-        return hasWon;
+        // Route user to index
+        router.push({ path: "/" });
     }
 </script>
 
 
 <style>
-    .bingo-wrapper {
-        display: grid;
-        grid-auto-flow: row;
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-auto-flow: row;
-        grid-template-areas:
-            ". . ."
-            ". bingo-header-wrapper ."
-            ". bingo-playfield-wrapper bingo-players-list-wrapper"
-            ". bingo-controls-wrapper ."
-            ". . .";
-    }
-
-    .bingo-header-wrapper {
-        grid-area: bingo-header-wrapper;
-    }
-
     .bingo-playfield-wrapper {
-        grid-area: bingo-playfield-wrapper;
-        grid-template-columns: auto auto auto;
-    }
-
-    .bingo-players-list-wrapper {
-        grid-area: bingo-players-list-wrapper;
-    }
-
-    .bingo-controls-wrapper {
-        grid-area: bingo-controls-wrapper;
+        grid-template-columns: repeat(v-bind(selectedSizeSqrt), auto);
     }
 </style>

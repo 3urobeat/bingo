@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:44:21
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 21:23:04
+ * Last Modified: 05.08.2023 15:31:58
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -23,7 +23,7 @@ import { UpdateObserver } from "../updateObserver";
 
 /**
  * This API route updates the user's playfield property and returns a boolean if the update was accepted.
- * Params: { name: string, playfield: [{ id: number, content: string, strike: boolean }], hasWon?: boolean }
+ * Params: { name: string, playfield: [{ id: number, content: string, strike: boolean }] }
  * Returns: "boolean"
  */
 
@@ -35,8 +35,8 @@ export default defineEventHandler(async (event) => {
     const params = await readBody(event);
     if (!params.name) return false;
 
-    // Set default hasWon if none was specified
-    if (!params.hasWon) params.hasWon = false;
+    // Check for win
+    const hasWon = checkPlayfieldForWin(params.playfield);
 
     console.log(`API set-playfield: Received set-playfield request for '${params.name}'`);
 
@@ -45,11 +45,11 @@ export default defineEventHandler(async (event) => {
     const db = useDatabase();
 
     // Update database record
-    await db.updateAsync({ name: params.name }, { $set: { playfield: params.playfield, lastActivity: Date.now(), hasWon: params.hasWon } });
+    await db.updateAsync({ name: params.name }, { $set: { playfield: params.playfield, lastActivity: Date.now(), hasWon: hasWon } });
 
 
     // Add name to knownWins if hasWon is true, otherwise remove it
-    if (params.hasWon) addToKnownWins(params.name);
+    if (hasWon) addToKnownWins(params.name);
         else removeFromKnownWins(params.name);
 
     // Check if we should reset all votes
@@ -62,3 +62,78 @@ export default defineEventHandler(async (event) => {
 
     return true;
 });
+
+
+/**
+ * Checks if this user has a Bingo (full row in x, y and xy direction) and notifies all other users
+ * @param playfield Array of card objects in this playfield
+ * @returns Boolean if this user has won
+ */
+function checkPlayfieldForWin(playfield: [{ id: number, content: string, strike: boolean }]) { // TODO: This code is probably inefficient and shit as fuck
+    let hasWon = false;
+
+    // Calculate the amount of rows and columns we have (playfield is square)
+    const rowColAmount = Math.sqrt(playfield.length);
+
+
+    // Check each row for win
+    for (let row = 0; row < rowColAmount; row++) {
+        const rowIdMin = rowColAmount * row;
+        const rowIdMax = rowColAmount * (row + 1);
+
+        // Get all cards inside the [rowIdMin, rowIdMax] interval
+        const rowCards = playfield.filter((e) => e.id > rowIdMin && e.id <= rowIdMax); // > and <= as our playfield starts at index 1 instead of 0
+
+        // Check if every element is striked
+        const rowWin = rowCards.every((e) => e.strike);
+
+        // Only update hasWon if it is not already true to avoid resetting existing win
+        if (!hasWon) hasWon = rowWin;
+    }
+
+
+    // Check each column for win
+    for (let col = 0; col < rowColAmount; col++) {
+        const colCards = [];
+
+        // Get all cards inside this column
+        for (let row = 0; row < rowColAmount; row++) {
+            const cardId = (rowColAmount * row) + col + 1; // +1 because our playfield starts at index 1 instead of 0
+
+            // Get this card and push it
+            colCards.push(playfield.find((e) => e.id == cardId));
+        }
+
+        // Check if every element is striked
+        const colWin = colCards.every((e) => e!.strike);
+
+        // Only update hasWon if it is not already true to avoid resetting existing win
+        if (!hasWon) hasWon = colWin;
+    }
+
+
+    // Check diagonale for win
+    const diagTlBrCards = []; // Top left to bottom right
+
+    for (let row = 0; row < rowColAmount; row++) {
+        const cardId = (rowColAmount * row) + (row + 1);
+
+        diagTlBrCards.push(playfield.find((e) => e.id == cardId));
+    }
+
+    const diagTrBlCards = []; // Top right to bottom left
+
+    for (let row = 0; row < rowColAmount; row++) {
+        const cardId = (rowColAmount * (row + 1)) - row;
+
+        diagTrBlCards.push(playfield.find((e) => e.id == cardId));
+    }
+
+    const diagWin = diagTlBrCards.every((e) => e!.strike) || diagTrBlCards.every((e) => e!.strike);
+
+    if (!hasWon) hasWon = diagWin;
+
+
+    // Return result
+    return hasWon;
+}

@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 15:37:29
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 13:48:01
+ * Last Modified: 01.08.2023 19:58:49
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -33,13 +33,15 @@ export default defineEventHandler(async (event) => {
     // Read body of the request we received
     const params = await readBody(event);
 
+    if (params.lastActivity == undefined) params.lastActivity = Date.now();
+
     console.log(`API set-activity: Updating lastActivity of user '${params.name}'`);
 
     if (params.name) {
         // TODO: Check for invalid names
 
         // Update database record
-        await db.updateAsync({ name: params.name }, { $set: { lastActivity: Date.now() } }, { });
+        await db.updateAsync({ name: params.name }, { $set: { lastActivity: params.lastActivity } }, { });
 
         return true;
     }
