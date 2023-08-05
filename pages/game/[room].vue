@@ -119,6 +119,7 @@
     const cards: Ref<{ id: number, content: string, strike: boolean }[]> = ref([]);
     const names: Ref<any[]> = ref([]);
     const editModeActive = ref(false);
+    const listButtonsSwitch = ref(false);
 
     const selectedSizeSqrt = computed(() => Math.sqrt(selectedSize.value)); // For CSS playfield-wrapper
 
@@ -225,9 +226,11 @@
 
 
     // Clean up when the page is unmounted
-    onUnmounted(() => {
+    /* onDeactivated(() => {
         clearInterval(updateLastActivityInterval);
-    });
+
+        eventStream.close();
+    }); */
 
 
     /**

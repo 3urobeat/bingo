@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 12:48:51
+ * Last Modified: 05.08.2023 18:10:28
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -28,7 +28,7 @@
 
             <select class="absolute scale-90 md:scale-100 right-2 md:right-4 top-4 px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700">
                 <option value="lang-english" class="bg-gray-600 hover:bg-gray-700">🇬🇧 English</option>
-                <option value="lang-german" class="bg-gray-600 hover:bg-gray-700">🇩🇪 Deutsch</option>
+                <!-- <option value="lang-german" class="bg-gray-600 hover:bg-gray-700">🇩🇪 Deutsch</option> -->
             </select>
         </nav>
 
