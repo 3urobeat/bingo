@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 04.08.2023 20:49:40
+ * Last Modified: 05.08.2023 12:09:00
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -191,7 +191,7 @@
         }
 
         // Select the correct size in the dropdown
-        selectedSize.value = Object.keys(playfield).length;
+        selectedSize.value = cards.value.length;
 
 
         // Get an event stream to update the names list on change
