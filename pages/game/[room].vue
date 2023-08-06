@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 18:10:00
+ * Last Modified: 06.08.2023 16:17:10
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -91,7 +91,9 @@
         </div>
 
         <button class="flex text-sm items-center gap-2 rounded-full px-2 text-gray-400 bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 text-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 bg-opacity-60" @click="listButtonsSwitch = !listButtonsSwitch">
-            <PhList></PhList> Toggle List and Buttons
+            <PhToggleLeft v-if="!listButtonsSwitch"></PhToggleLeft>
+            <PhToggleRight v-if="listButtonsSwitch"></PhToggleRight>
+            Toggle List and Buttons
         </button>
 
         <div class="bingo-controls-wrapper flex flex-col md:flex-row justify-center items-center text-xs md:text-base gap-3" v-if="!listButtonsSwitch">
@@ -104,7 +106,7 @@
 
 
 <script setup lang="ts">
-    import { PhSignOut, PhCheck, PhConfetti, PhTrophy, PhX, PhList } from "@phosphor-icons/vue";
+    import { PhSignOut, PhCheck, PhConfetti, PhTrophy, PhX, PhToggleLeft, PhToggleRight } from "@phosphor-icons/vue";
     import { useFetch } from '@vueuse/core'
 
     const router   = useRouter();
