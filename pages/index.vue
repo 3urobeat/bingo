@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:03:50
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 15:43:13
+ * Last Modified: 07.08.2023 19:27:25
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -55,12 +55,18 @@
     let eventStream: EventSource;
 
     onBeforeMount(() => {
-        eventStream = useEventStream("get-names");
+        eventStream = new EventSource("/api/get-names");
 
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know and update the list
             names.value = JSON.parse(msg.data.split(" ").pop());
         })
+    });
+
+
+    // Clean up when the page is unmounted
+    onUnmounted(() => {
+        eventStream.close();
     });
 
 

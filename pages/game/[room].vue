@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 06.08.2023 16:17:10
+ * Last Modified: 07.08.2023 19:27:29
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -202,7 +202,7 @@
 
 
         // Get an event stream to update the names list on change
-        eventStream = useEventStream("get-names")!;
+        eventStream = new EventSource("/api/get-names");
 
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know
@@ -228,11 +228,11 @@
 
 
     // Clean up when the page is unmounted
-    /* onDeactivated(() => {
+    onUnmounted(() => {
         clearInterval(updateLastActivityInterval);
 
         eventStream.close();
-    }); */
+    });
 
 
     /**

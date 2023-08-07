@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 10:45:36
  * Author: 3urobeat
  *
- * Last Modified: 30.07.2023 12:50:07
+ * Last Modified: 07.08.2023 19:29:30
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,7 +16,7 @@
 
 
 export class UpdateObserver {
-    private subscribers: {[key: string]: () => void};
+    private subscribers: { id: number, func: () => void }[];
 
     // Provide a getInstance() function to make this class a singleton
     static Instance: UpdateObserver;
@@ -31,43 +31,38 @@ export class UpdateObserver {
     }
 
     constructor() {
-        this.subscribers = {};
+        this.subscribers = [];
     }
 
     /**
      * Adds a subscriber to the subscription list
      * @param subscriber
-     * @returns Index of this subscriber function in the subscribers collection
+     * @returns ID of this subscriber function in the subscribers collection
      */
     addSubscriber(subscriber: () => void) {
-        const currentIndex = Object.values(this.subscribers).length - 1;
+        const lastSub = this.subscribers[this.subscribers.length - 1] || { id: -1 };
 
-        this.subscribers[String(currentIndex + 1)] = subscriber;
+        this.subscribers.push({ id: lastSub.id + 1, func: subscriber });
 
-        console.log(`UpdateObserver: New subscription request, adding index ${currentIndex + 1}. There are now ${currentIndex + 2} subscribers.`);
+        console.log(`UpdateObserver: New subscription request, adding sub with id ${lastSub.id + 1}. There are now ${this.subscribers.length} subscribers.`);
 
-        return currentIndex + 1;
+        return lastSub.id + 1;
     }
 
     /**
      * Deletes a subscriber from the subscription list
-     * @param index Index of the subscriber to delete
-     * @returns true if subscriber was removed, false if it doesn't exist
+     * @param id ID of the subscriber to delete
      */
-    deleteSubscriber(index: number) { // TODO
-        console.log(`UpdateObserver: Subscriber ${index} requested to be deleted, there are now ${Object.values(this.subscribers).length} subscribers left.`);
+    deleteSubscriber(id: number) {
+        this.subscribers = this.subscribers.filter((e) => e.id != id);
 
-        if (!Object.values(this.subscribers)[index]) return false;
-
-        delete Object.values(this.subscribers)[index];
-
-        return true;
+        console.log(`UpdateObserver: Subscriber with id ${id} requested to be deleted, there are now ${this.subscribers.length} subscribers left.`);
     }
 
     /**
      * Calls every subscribed function
      */
     callSubscribers() {
-        Object.values(this.subscribers).forEach((e) => e());
+        Object.values(this.subscribers).forEach((e) => e.func());
     }
 }
