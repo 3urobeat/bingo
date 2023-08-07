@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 07.08.2023 19:27:29
+ * Last Modified: 07.08.2023 22:26:46
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <div class="bingo-players-list-wrapper" v-if="listButtonsSwitch">
+            <div class="bingo-players-list-wrapper" v-if="listButtonsSwitch || !$device.isMobile">
                 <span class="font-semibold">Active Players:</span>
                 <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 w-full outline outline-black outline-2">
                     <div class="ml-4 mr-4 pt-1 pb-1">
@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        <button class="flex text-sm items-center gap-2 rounded-full px-2 text-gray-400 bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 text-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 bg-opacity-60" @click="listButtonsSwitch = !listButtonsSwitch">
+        <button v-if="$device.isMobile" class="flex text-sm items-center gap-2 rounded-full px-2 text-gray-400 bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 text-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 bg-opacity-60" @click="listButtonsSwitch = !listButtonsSwitch">
             <PhToggleLeft v-if="!listButtonsSwitch"></PhToggleLeft>
             <PhToggleRight v-if="listButtonsSwitch"></PhToggleRight>
             Toggle List and Buttons
