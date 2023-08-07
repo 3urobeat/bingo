@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 07.08.2023 22:26:46
+ * Last Modified: 07.08.2023 22:33:20
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -50,6 +50,7 @@
                         </button>
                         <button class="bingo-win-popup-buttons-vote border-black border-2 rounded-lg py-1 px-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
                             <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
+                            <PhCheck class="float-right mr-2 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
                         </button>
                     </div>
                 </div>
@@ -244,6 +245,8 @@
         if (selectedSize.value < cards.value.length) {
             if (confirm("Shrinking your playfield will loose data! Are you sure?")) {
                 cards.value.splice(selectedSize.value, cards.value.length - selectedSize.value); // Remove cards from the end to reach new size
+            } else {
+                selectedSize.value = cards.value.length; // Simple "fix" to prevent styling from updating to the rejected size (because the @change event instantly updates selectedSize)
             }
         } else {
             for (let i = cards.value.length + 1; i <= selectedSize.value; i++) {
@@ -388,6 +391,7 @@
 
 
 <style>
+    /* This is used to generate a square grid for each selectable size */
     .bingo-playfield-wrapper {
         grid-template-columns: repeat(v-bind(selectedSizeSqrt), auto);
     }
