@@ -4,7 +4,7 @@
  * Created Date: 27.07.2023 19:28:14
  * Author: 3urobeat
  *
- * Last Modified: 31.07.2023 19:57:57
+ * Last Modified: 08.08.2023 18:14:15
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -79,6 +79,9 @@ export default defineEventHandler(async (event) => {
 
     // Update once on load
     updateClient();
+
+    // Broadcast new user
+    UpdateObserver.getInstance().callSubscribers();
 
     // Listen for connection close and clean up
     event.node.req.on("close", () => {

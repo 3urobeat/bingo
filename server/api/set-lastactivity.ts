@@ -4,7 +4,7 @@
  * Created Date: 28.07.2023 15:37:29
  * Author: 3urobeat
  *
- * Last Modified: 01.08.2023 19:58:49
+ * Last Modified: 08.08.2023 18:09:48
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -16,11 +16,12 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+import { UpdateObserver } from "../updateObserver";
 
 
 /**
- * This API route updates the user's lastActivity property and returns boolean if update was successful.
- * Params: { name: string }
+ * This API route updates the user's lastActivity property and returns boolean if update was successful. Set lastActivity to 0 if this is a logout.
+ * Params: { name: string, lastActivity?: number }
  * Returns: "boolean"
  */
 
@@ -42,6 +43,9 @@ export default defineEventHandler(async (event) => {
 
         // Update database record
         await db.updateAsync({ name: params.name }, { $set: { lastActivity: params.lastActivity } }, { });
+
+        // Call update subscribers if lastActivity is 0 to show other users the logout
+        if (params.lastActivity == 0) UpdateObserver.getInstance().callSubscribers();
 
         return true;
     }
