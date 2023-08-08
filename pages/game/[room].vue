@@ -5,7 +5,7 @@
  * Created Date: 27.07.2023 13:06:42
  * Author: 3urobeat
  * 
- * Last Modified: 07.08.2023 22:33:20
+ * Last Modified: 08.08.2023 19:21:29
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -22,7 +22,7 @@
         <PhSignOut class="absolute left-5 top-5" size="23px" @click="clickSignOutButton"></PhSignOut>
     </button>
 
-    <div class="bingo-wrapper flex flex-col justify-evenly items-center h-full gap-2 md:gap-0">
+    <div class="bingo-wrapper flex flex-col justify-evenly items-center h-full">
         <div class="bingo-header-wrapper flex flex-col gap-2 items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
 
@@ -68,36 +68,49 @@
                 </div>
             </div>
 
-            <div class="bingo-players-list-wrapper" v-if="listButtonsSwitch || !$device.isMobile">
-                <span class="font-semibold">Active Players:</span>
-                <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 w-full outline outline-black outline-2">
-                    <div class="ml-4 mr-4 pt-1 pb-1">
-                        <li class="clearfix" v-for="thisname in names" :key="thisname">
-                            {{thisname.name}} 
-                            <span class="relative float-right pl-4">
-                                <PhTrophy size="20px" v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mr-4 mt-[1px] text-yellow-500"></PhTrophy>
-                                {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
-                            </span>
-                        </li>
-                    </div>
+            <div class="bingo-mobile-controls-wrapper flex flex-col gap-4 md:gap-0">
+                <!-- List/Buttons Switch for mobile only -->
+                <button v-if="$device.isMobile" class="flex text-sm items-center gap-2 rounded-full px-2 text-gray-400 bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 text-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 bg-opacity-60" @click="listButtonsSwitch = !listButtonsSwitch">
+                    <PhToggleLeft v-if="!listButtonsSwitch"></PhToggleLeft>
+                    <PhToggleRight v-if="listButtonsSwitch"></PhToggleRight>
+                    Toggle List and Buttons
+                </button>
 
-                    <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
-                        <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-2 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
-                            <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
-                            <PhCheck class="float-right mr-2 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
-                        </button>
-                    </div>
-                </ul>
+                <!-- Active players list for desktop & mobile use -->
+                <div class="bingo-players-list-wrapper" v-if="listButtonsSwitch || !$device.isMobile">
+                    <span class="font-semibold">Active Players:</span>
+                    <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 w-full outline outline-black outline-2">
+                        <div class="ml-4 mr-4 pt-1 pb-1">
+                            <li class="clearfix" v-for="thisname in names" :key="thisname">
+                                {{thisname.name}} 
+                                <span class="relative float-right pl-4">
+                                    <PhTrophy size="20px" v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mr-4 mt-[1px] text-yellow-500"></PhTrophy>
+                                    {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
+                                </span>
+                            </li>
+                        </div>
+
+                        <div class="flex flex-col items-center px-2" v-if="names.some((e) => e.hasWon)">
+                            <button class="bingo-players-list-buttons-vote border-black border-2 rounded-lg w-full py-1 mt-2 mb-2 bg-playbtn hover:bg-green-500" @click="voteForRestart">
+                                <span class="font-bold mr-1">({{ names.filter((e) => e.hasVotedForRestart).length }})</span> Vote Restart
+                                <PhCheck class="float-right mr-2 mt-[1px]" size="20px" v-if="names.find((e) => e.name == selectedName).hasVotedForRestart"></PhCheck>
+                            </button>
+                        </div>
+                    </ul>
+                </div>
+
+                <!-- Button controls for mobile only -->
+                <div class="flex flex-col md:flex-row justify-center items-center text-xs md:text-base gap-3" v-if="$device.isMobile && !listButtonsSwitch">
+                    <button @click="resetContents" class="bingo-controls-reset-contents text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Content</button>
+                    <button @click="toggleEditMode" class="bingo-controls-toggle-edit text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 py-1 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 outline outline-white outline-2">Toggle Edit Mode</button>
+                    <button @click="resetStrikes()" class="bingo-controls-reset-strikes text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Strikes</button>
+                </div>
             </div>
         </div>
 
-        <button v-if="$device.isMobile" class="flex text-sm items-center gap-2 rounded-full px-2 text-gray-400 bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 text-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 bg-opacity-60" @click="listButtonsSwitch = !listButtonsSwitch">
-            <PhToggleLeft v-if="!listButtonsSwitch"></PhToggleLeft>
-            <PhToggleRight v-if="listButtonsSwitch"></PhToggleRight>
-            Toggle List and Buttons
-        </button>
 
-        <div class="bingo-controls-wrapper flex flex-col md:flex-row justify-center items-center text-xs md:text-base gap-3" v-if="!listButtonsSwitch">
+        <!-- Button controls for desktop use only -->
+        <div class="flex flex-col md:flex-row justify-center items-center text-xs md:text-base gap-3" v-if="!$device.isMobile">
             <button @click="resetContents" class="bingo-controls-reset-contents text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Content</button>
             <button @click="toggleEditMode" class="bingo-controls-toggle-edit text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 py-1 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 outline outline-white outline-2">Toggle Edit Mode</button>
             <button @click="resetStrikes()" class="bingo-controls-reset-strikes text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Strikes</button>
