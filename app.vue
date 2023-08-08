@@ -6,7 +6,7 @@
  * Created Date: 27.07.2023 12:48:01
  * Author: 3urobeat
  * 
- * Last Modified: 05.08.2023 18:10:28
+ * Last Modified: 08.08.2023 18:44:18
  * Modified By: 3urobeat
  * 
  * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
@@ -19,6 +19,14 @@
 
 
 <template>
+    <title>Play Bingo!</title>
+    <meta content="Play Bingo!" property="og:title" />
+    <meta content="Play Meme Bingo with your friends from any browser! A webgame made using Nuxt & Vue.js." property="og:description" />
+    <!-- <meta content="https://github.com/3urobeat/bingo" property="og:url" /> -->
+    <meta content="public/favicon.ico" property="og:image" /> <!-- TODO: Does this work? -->
+    <meta content="#43B581" data-react-helmet="true" name="theme-color" />
+
+
     <div class="flex flex-col items-center justify-between h-screen w-screen overflow-y-hidden bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600">
         <nav class="flex justify-center">
             <div class="pt-2 w-28">
