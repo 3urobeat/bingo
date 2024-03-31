@@ -5,7 +5,7 @@
  * Created Date: 2023-07-27 13:03:50
  * Author: 3urobeat
  *
- * Last Modified: 2024-03-31 13:50:11
+ * Last Modified: 2024-03-31 13:57:49
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -21,7 +21,7 @@
     <div class="greetings-wrapper items-center gap-y-16 md:gap-x-0 mt-16">
         <div class="greetings-new-name flex flex-col items-center gap-2">
             <span class="text-lg">Your name:</span>
-            <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
+            <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg px-2">
             <button @click="play" class="greetings-new-name-play rounded-lg py-[1px] px-7 bg-playbtn hover:bg-green-500">Play!</button>
             <div class="greetings-new-name-error text-red-500 mt-5" v-if="showNewNameError">Error! This name is invalid or already in use! Names must be 2-32 alphanumeric characters long.</div>
         </div>
@@ -30,7 +30,7 @@
             <span>...or select one:</span>
             <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg p-1 border-solid border-2 border-black">
                 <span class="ml-4 mr-4" v-if="names.length == 0">No existing names found!</span>
-                <li class="ml-4 mr-4" v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
+                <li class="ml-4 mr-4 cursor-pointer hover:text-gray-400 transition-colors" v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
             <div class="greetings-existing-name-error text-red-500 mt-5" v-if="showExistingNameError">Error! This name is already in use.</div>
         </div>

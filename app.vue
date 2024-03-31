@@ -6,7 +6,7 @@
  * Created Date: 2023-07-27 12:48:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-03-31 13:40:20
+ * Last Modified: 2024-03-31 14:35:57
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -19,14 +19,14 @@
 
 
 <template>
-    <div class="flex flex-col items-center justify-between h-screen w-screen overflow-auto bg-gradient-to-br from-gray-400 via-gray-500 to-gray-600">
-        <nav class="flex justify-center">
-            <div class="pt-2 w-28">
+    <div class="flex flex-col items-center justify-between h-screen w-screen overflow-auto bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
+        <nav class="flex justify-center pb-10">
+            <div class="absolute pt-2 w-28">
                 <img :src="logosrc" alt="Logo"/>
             </div>
             <hr class="absolute h-0.5 mt-16 w-full bg-black border-0">
 
-            <select class="absolute scale-90 md:scale-100 right-2 md:right-4 top-4 px-2 py-1 rounded-xl text-gray-400 bg-gray-600 hover:bg-gray-700">
+            <select class="absolute scale-90 md:scale-100 right-2 md:right-4 top-4 px-2 py-1 rounded-xl text-gray-300 bg-gray-500 hover:bg-gray-600">
                 <option value="lang-english">🇬🇧 English</option>
                 <!-- <option value="lang-german">🇩🇪 Deutsch</option> -->
             </select>

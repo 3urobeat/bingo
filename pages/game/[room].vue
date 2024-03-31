@@ -5,7 +5,7 @@
  * Created Date: 2023-07-27 13:06:42
  * Author: 3urobeat
  *
- * Last Modified: 2024-03-31 13:52:17
+ * Last Modified: 2024-03-31 14:16:42
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -22,14 +22,14 @@
         <PhSignOut class="absolute left-5 top-5" size="23px" @click="clickSignOutButton"></PhSignOut>
     </button>
 
-    <div class="bingo-wrapper flex flex-col justify-evenly items-center h-full">
+    <div class="bingo-wrapper flex flex-col justify-evenly items-center h-screen">
 
         <!-- Name and playfield size selector -->
         <div class="bingo-header-wrapper flex flex-col gap-2 items-center">
             <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
 
-            <select class="px-2 py-1 rounded-xl text-gray-400 bg-gray-600 hover:bg-gray-700" @change="selectPlayfieldSize" v-model="selectedSize">
-                <option v-for="thissize in playfieldSizes" :value="thissize.amount" :selected="thissize.amount == selectedSize" class="bg-gray-600 hover:bg-gray-700">{{ thissize.str }}</option>
+            <select class="px-2 py-1 rounded-xl text-gray-300 bg-gray-500 hover:bg-gray-600" @change="selectPlayfieldSize" v-model="selectedSize">
+                <option v-for="thissize in playfieldSizes" :value="thissize.amount" :selected="thissize.amount == selectedSize">{{ thissize.str }}</option>
             </select>
 
             <span class="bingo-header-error text-red-500 mt-5" v-if="showBingoHeaderError">Failed to load playfield!</span>
@@ -78,7 +78,7 @@
             <div class="bingo-mobile-controls-wrapper flex flex-col gap-4 md:gap-0">
 
                 <!-- List/Buttons Switch for mobile only -->
-                <button v-if="$device.isMobile" class="flex text-sm items-center gap-2 rounded-full px-2 text-gray-400 bg-[#24292F] hover:bg-[#24292F]/90 focus:ring-4 focus:outline-none focus:ring-[#24292F]/50 text-center dark:focus:ring-gray-500 dark:hover:bg-[#050708]/30 bg-opacity-60" @click="listButtonsSwitch = !listButtonsSwitch">
+                <button v-if="$device.isMobile" class="flex text-sm items-center gap-2 rounded-full px-2 text-center text-gray-300 bg-gray-500 hover:bg-gray-600" @click="listButtonsSwitch = !listButtonsSwitch">
                     <PhToggleLeft v-if="!listButtonsSwitch"></PhToggleLeft>
                     <PhToggleRight v-if="listButtonsSwitch"></PhToggleRight>
                     Toggle List and Buttons
@@ -109,10 +109,10 @@
                 </div>
 
                 <!-- Button controls for mobile only -->
-                <div class="flex flex-col md:flex-row justify-center items-center text-xs md:text-base gap-3" v-if="$device.isMobile && !listButtonsSwitch">
-                    <button @click="resetContents" class="bingo-controls-reset-contents text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Content</button>
-                    <button @click="toggleEditMode" class="bingo-controls-toggle-edit text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 py-1 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 outline outline-white outline-2">Toggle Edit Mode</button>
-                    <button @click="resetStrikes()" class="bingo-controls-reset-strikes text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Strikes</button>
+                <div class="flex flex-col md:flex-row justify-center items-center text-sm md:text-base gap-2" v-if="$device.isMobile && !listButtonsSwitch">
+                    <button @click="resetContents" class="bingo-controls-reset-contents py-0.5 px-2 rounded-xl text-gray-300 bg-gray-500 hover:bg-gray-600">Delete Content</button>
+                    <button @click="toggleEditMode" class="bingo-controls-toggle-edit py-0.5 px-2 rounded-xl outline outline-white outline-2 text-gray-300 bg-gray-500 hover:bg-gray-600">Toggle Edit Mode</button>
+                    <button @click="resetStrikes()" class="bingo-controls-reset-strikes py-0.5 px-2 rounded-xl text-gray-300 bg-gray-500 hover:bg-gray-600">Delete Strikes</button>
                 </div>
 
             </div>
@@ -121,10 +121,10 @@
 
 
         <!-- Button controls for desktop use only -->
-        <div class="flex flex-col md:flex-row justify-center items-center text-xs md:text-base gap-3" v-if="!$device.isMobile">
-            <button @click="resetContents" class="bingo-controls-reset-contents text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Content</button>
-            <button @click="toggleEditMode" class="bingo-controls-toggle-edit text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 py-1 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800 outline outline-white outline-2">Toggle Edit Mode</button>
-            <button @click="resetStrikes()" class="bingo-controls-reset-strikes text-gray-400 bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700 px-2 rounded-xl hover:from-gray-600 hover:via-gray-700 hover:to-gray-800">Delete Strikes</button>
+        <div class="flex flex-col md:flex-row justify-center items-center text-sm md:text-base gap-3" v-if="!$device.isMobile">
+            <button @click="resetContents" class="bingo-controls-reset-contents py-1 px-2 rounded-xl text-gray-300 bg-gray-500 hover:bg-gray-600">Delete Content</button>
+            <button @click="toggleEditMode" class="bingo-controls-toggle-edit py-1 px-2 rounded-xl outline outline-white outline-2 text-gray-300 bg-gray-500 hover:bg-gray-600">Toggle Edit Mode</button>
+            <button @click="resetStrikes()" class="bingo-controls-reset-strikes py-1 px-2 rounded-xl text-gray-300 bg-gray-500 hover:bg-gray-600">Delete Strikes</button>
         </div>
 
     </div>
