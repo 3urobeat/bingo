@@ -6,7 +6,7 @@
  * Created Date: 2023-07-27 12:48:01
  * Author: 3urobeat
  *
- * Last Modified: 2024-03-31 13:01:13
+ * Last Modified: 2024-03-31 13:40:20
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -26,9 +26,9 @@
             </div>
             <hr class="absolute h-0.5 mt-16 w-full bg-black border-0">
 
-            <select class="absolute scale-90 md:scale-100 right-2 md:right-4 top-4 px-2 py-1 rounded-xl bg-gray-600 hover:bg-gray-700">
-                <option value="lang-english" class="bg-gray-600 hover:bg-gray-700">🇬🇧 English</option>
-                <!-- <option value="lang-german" class="bg-gray-600 hover:bg-gray-700">🇩🇪 Deutsch</option> -->
+            <select class="absolute scale-90 md:scale-100 right-2 md:right-4 top-4 px-2 py-1 rounded-xl text-gray-400 bg-gray-600 hover:bg-gray-700">
+                <option value="lang-english">🇬🇧 English</option>
+                <!-- <option value="lang-german">🇩🇪 Deutsch</option> -->
             </select>
         </nav>
 
@@ -37,7 +37,7 @@
         <footer class="self-center flex flex-col items-center mb-2 mt-2 text-xs md:text-sm opacity-50 text-nowrap">
             Bingo v{{ packagejson.version }}
 
-            <a class="flex w-fit items-center mt-0.5 -ml-1 rounded-full px-2 text-white bg-gray-700 hover:bg-gray-400 hover:transition-all bg-opacity-80" href="http://github.com/3urobeat/bingo" target="_blank">
+            <a class="flex w-fit items-center mt-0.5 -ml-1 rounded-full px-2 text-white bg-gray-700 hover:bg-gray-500 hover:transition-all bg-opacity-80" href="http://github.com/3urobeat/bingo" target="_blank">
 
                 <!-- GitHub logo -->
                 <svg class="mr-1" width="1em" height="1em" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -48,8 +48,8 @@
 
             </a>
 
-            <p>Licensed under <a class="underline hover:text-gray-500 rounded-lg" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPLv3</a></p>
-            <p>Copyright (c) 2023-2024 <a class="underline hover:text-gray-500 rounded-lg" href="https://github.com/3urobeat" target="_blank">3urobeat</a></p>
+            <p>Licensed under <a class="underline hover:text-gray-600 rounded-lg" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPLv3</a></p>
+            <p>Copyright (c) 2023-2024 <a class="underline hover:text-gray-600 rounded-lg" href="https://github.com/3urobeat" target="_blank">3urobeat</a></p>
         </footer>
     </div>
 </template>

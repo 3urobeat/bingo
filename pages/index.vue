@@ -5,7 +5,7 @@
  * Created Date: 2023-07-27 13:03:50
  * Author: 3urobeat
  *
- * Last Modified: 2024-03-23 14:14:07
+ * Last Modified: 2024-03-31 13:50:11
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -20,14 +20,14 @@
 <template>
     <div class="greetings-wrapper items-center gap-y-16 md:gap-x-0 mt-16">
         <div class="greetings-new-name flex flex-col items-center gap-2">
-            <span class="text-lg">Dein Name:</span>
+            <span class="text-lg">Your name:</span>
             <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
             <button @click="play" class="greetings-new-name-play rounded-lg py-[1px] px-7 bg-playbtn hover:bg-green-500">Play!</button>
             <div class="greetings-new-name-error text-red-500 mt-5" v-if="showNewNameError">Error! This name is invalid or already in use! Names must be 2-32 alphanumeric characters long.</div>
         </div>
 
         <div class="greetings-existing-name">
-            <span>...oder wähle einen aus:</span>
+            <span>...or select one:</span>
             <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg p-1 border-solid border-2 border-black">
                 <span class="ml-4 mr-4" v-if="names.length == 0">No existing names found!</span>
                 <li class="ml-4 mr-4" v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
@@ -45,9 +45,9 @@
 
 
     // Get refs to various elements
-    const nameinput = ref("");
-    const names: Ref<any[]> = ref([]);
-    const showNewNameError = ref(false);
+    const nameinput             = ref("");
+    const names: Ref<any[]>     = ref([]);
+    const showNewNameError      = ref(false);
     const showExistingNameError = ref(false);
 
 
@@ -129,7 +129,6 @@
      * Function which gets called when the user selects an existing name
      */
     async function selectExistingName(name: string) {
-
         // Check if name is currently in use
         const res = await useFetch("/api/get-lastactivity", { // TODO: Stupid that this is a POST
             method: "POST",
