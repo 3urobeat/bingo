@@ -1,13 +1,13 @@
 /*
  * File: set-lastactivity.ts
  * Project: bingo
- * Created Date: 28.07.2023 15:37:29
+ * Created Date: 2023-07-28 15:37:29
  * Author: 3urobeat
  *
- * Last Modified: 01.08.2023 19:58:49
+ * Last Modified: 2024-03-31 12:49:41
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -16,11 +16,12 @@
 
 
 import { useDatabase } from "../../composables/useDatabase";
+import { UpdateObserver } from "../updateObserver";
 
 
 /**
- * This API route updates the user's lastActivity property and returns boolean if update was successful.
- * Params: { name: string }
+ * This API route updates the user's lastActivity property and returns boolean if update was successful. Set lastActivity to 0 if this is a logout.
+ * Params: { name: string, lastActivity?: number }
  * Returns: "boolean"
  */
 
@@ -42,6 +43,9 @@ export default defineEventHandler(async (event) => {
 
         // Update database record
         await db.updateAsync({ name: params.name }, { $set: { lastActivity: params.lastActivity } }, { });
+
+        // Call update subscribers if lastActivity is 0 to show other users the logout
+        if (params.lastActivity == 0) UpdateObserver.getInstance().callSubscribers();
 
         return true;
     }

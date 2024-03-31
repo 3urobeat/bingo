@@ -2,14 +2,14 @@
 /*
  * File: index.vue
  * Project: bingo
- * Created Date: 27.07.2023 13:03:50
+ * Created Date: 2023-07-27 13:03:50
  * Author: 3urobeat
- * 
- * Last Modified: 05.08.2023 15:43:13
+ *
+ * Last Modified: 2024-03-31 13:57:49
  * Modified By: 3urobeat
- * 
- * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
- * 
+ *
+ * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
@@ -20,17 +20,17 @@
 <template>
     <div class="greetings-wrapper items-center gap-y-16 md:gap-x-0 mt-16">
         <div class="greetings-new-name flex flex-col items-center gap-2">
-            <span class="text-lg">Dein Name:</span>
-            <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg">
+            <span class="text-lg">Your name:</span>
+            <input type="text" @keyup.enter="play" v-model="nameinput" class="rounded-lg px-2">
             <button @click="play" class="greetings-new-name-play rounded-lg py-[1px] px-7 bg-playbtn hover:bg-green-500">Play!</button>
             <div class="greetings-new-name-error text-red-500 mt-5" v-if="showNewNameError">Error! This name is invalid or already in use! Names must be 2-32 alphanumeric characters long.</div>
         </div>
 
         <div class="greetings-existing-name">
-            <span>...oder wähle einen aus:</span>
+            <span>...or select one:</span>
             <ul id="greetings-existing-names-list" class="greetings-existing-names-list rounded-lg p-1 border-solid border-2 border-black">
                 <span class="ml-4 mr-4" v-if="names.length == 0">No existing names found!</span>
-                <li class="ml-4 mr-4" v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
+                <li class="ml-4 mr-4 cursor-pointer hover:text-gray-400 transition-colors" v-for="thisname in names" @click="selectExistingName(thisname.name)" :key="thisname">{{thisname.name}}</li> <!-- This is filled automatically with data from useFetch() below -->
             </ul>
             <div class="greetings-existing-name-error text-red-500 mt-5" v-if="showExistingNameError">Error! This name is already in use.</div>
         </div>
@@ -45,9 +45,9 @@
 
 
     // Get refs to various elements
-    const nameinput = ref("");
-    const names: Ref<any[]> = ref([]);
-    const showNewNameError = ref(false);
+    const nameinput             = ref("");
+    const names: Ref<any[]>     = ref([]);
+    const showNewNameError      = ref(false);
     const showExistingNameError = ref(false);
 
 
@@ -55,12 +55,18 @@
     let eventStream: EventSource;
 
     onBeforeMount(() => {
-        eventStream = useEventStream("get-names");
+        eventStream = new EventSource("/api/get-names");
 
         eventStream.addEventListener("message", (msg) => {
             // Get a list of all names we currently know and update the list
             names.value = JSON.parse(msg.data.split(" ").pop());
         })
+    });
+
+
+    // Clean up when the page is unmounted
+    onUnmounted(() => {
+        eventStream.close();
     });
 
 
@@ -123,7 +129,6 @@
      * Function which gets called when the user selects an existing name
      */
     async function selectExistingName(name: string) {
-
         // Check if name is currently in use
         const res = await useFetch("/api/get-lastactivity", { // TODO: Stupid that this is a POST
             method: "POST",
@@ -159,7 +164,7 @@
     .greetings-new-name {
         grid-area: name-input;
     }
-    
+
     .greetings-existing-name {
         grid-area: existing-names;
     }

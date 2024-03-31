@@ -1,13 +1,13 @@
 /*
- * File: set-name.ts
+ * File: update-name.ts
  * Project: bingo
- * Created Date: 2023-07-27 19:59:02
+ * Created Date: 2024-03-31 14:47:59
  * Author: 3urobeat
  *
- * Last Modified: 2024-03-31 12:49:33
+ * Last Modified: 2024-03-31 15:29:26
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -20,9 +20,9 @@ import { UpdateObserver } from "../updateObserver";
 
 
 /**
- * This API route inserts a record for a new user and returns a boolean if the name was accepted. Duplicate names will be rejected.
- * Params: { name: string, lang?: string }
- * Returns: "boolean"
+ * This API changes a name in the database. Duplicate names will be rejected
+ * Params: { oldName: string, newName: string }
+ * Returns: boolean
  */
 
 
@@ -34,24 +34,23 @@ export default defineEventHandler(async (event) => {
     // Read body of the request we received
     const params = await readBody(event);
 
-    if (params.name) {
+    if (params.oldName && params.newName) {
         // Check for invalid names and reject request
-        if (!/^[A-Za-z][A-Za-z0-9_]{1,33}$/.test(params.name) || ["undefined", "null"].includes(params.name)) return false;
+        if (!/^[A-Za-z][A-Za-z0-9_]{1,33}$/.test(params.newName) || ["undefined", "null"].includes(params.newName)) return false;
 
         // Check for existing record and reject request
-        const existingNames = await db.findAsync({ name: params.name });
+        const existingNames = await db.findAsync({ name: params.newName });
 
-        if (existingNames.length > 0) return false;
-
-
-        // Set default lang if none was specified
-        if (!params.lang) params.lang = "english";
+        if (existingNames.length > 0) {
+            console.log(`API update-name: Rejecting name change request to '${params.newName}' because it already exists`);
+            return false;
+        }
 
 
         // Upsert new database record
-        await db.insertAsync({ name: params.name, lastActivity: Date.now(), lang: params.lang, playfield: [], hasWon: false });
+        await db.updateAsync({ name: params.oldName }, { $set: { name: params.newName } });
 
-        console.log(`API set-name: Inserting new name '${params.name}'`);
+        console.log(`API update-name: Changing name '${params.oldName}' to name '${params.newName}'`);
 
 
         // Update every subscriber
