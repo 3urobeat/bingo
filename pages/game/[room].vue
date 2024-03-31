@@ -5,7 +5,7 @@
  * Created Date: 2023-07-27 13:06:42
  * Author: 3urobeat
  *
- * Last Modified: 2024-03-31 14:16:42
+ * Last Modified: 2024-03-31 15:40:14
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -26,7 +26,9 @@
 
         <!-- Name and playfield size selector -->
         <div class="bingo-header-wrapper flex flex-col gap-2 items-center">
-            <ClientOnly><span class="text-2xl font-semibold">{{ selectedName }}</span></ClientOnly>
+            <input type="text" class="rounded-lg w-full px-2 bg-gray-200" v-if="editModeActive" @focusout="updateName()" v-model.trim="selectedName">
+            <span class="text-2xl font-semibold" v-if="!editModeActive">{{ selectedName }}</span>
+
 
             <select class="px-2 py-1 rounded-xl text-gray-300 bg-gray-500 hover:bg-gray-600" @change="selectPlayfieldSize" v-model="selectedSize">
                 <option v-for="thissize in playfieldSizes" :value="thissize.amount" :selected="thissize.amount == selectedSize">{{ thissize.str }}</option>
@@ -249,7 +251,7 @@
 
             // Update ref
             names.value = filtered;
-        })
+        });
     });
 
 
@@ -411,6 +413,42 @@
 
         // Route user to index
         router.push({ path: "/" });
+    }
+
+
+    /**
+     * Function called when user removes focus from name edit input field
+     */
+    async function updateName() {
+        // Deny empty name field
+        if (selectedName.value == "") {
+            selectedName.value = roomName; // Room name is still the old value
+            return;
+        }
+
+        // Update name in database
+        let success = await useFetch("/api/update-name", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                oldName: roomName,
+                newName: selectedName.value
+            })
+        });
+
+        console.log("Name change request result: " + success.data.value);
+
+        if (success.data.value == "true") { // Yes, it is a string. Egh.
+            window.localStorage.selectedName = selectedName.value;
+
+            // Route user to index
+            router.push({ path: "/game/" + selectedName.value });
+        } else {
+            selectedName.value = roomName;
+            return;
+        }
     }
 </script>
 
