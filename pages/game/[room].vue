@@ -5,7 +5,7 @@
  * Created Date: 2023-07-27 13:06:42
  * Author: 3urobeat
  *
- * Last Modified: 2024-03-31 13:47:10
+ * Last Modified: 2024-03-31 13:52:17
  * Modified By: 3urobeat
  *
  * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
@@ -157,15 +157,15 @@
 
     // Load stuff on page load
     onBeforeMount(async () => {
-        // Redirect user to their room if they try to visit another user's room
-        if (roomName != window.localStorage.selectedName) {
-            router.push({ path: "/game/" + window.localStorage.selectedName });
-            return;
-        }
-
         // Redirect user to index page if they have no name selected or lastActivity is > 30 min ago
         if (!window.localStorage.selectedName || Date.now() - window.localStorage.lastActivity > 1.8e+6) {
             router.push({ path: "/" });
+            return;
+        }
+
+        // Redirect user to their room if they try to visit another user's room
+        if (roomName != window.localStorage.selectedName) {
+            router.push({ path: "/game/" + window.localStorage.selectedName });
             return;
         }
 
