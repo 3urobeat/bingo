@@ -1,13 +1,13 @@
 /*
  * File: updateObserver.ts
  * Project: bingo
- * Created Date: 28.07.2023 10:45:36
+ * Created Date: 2023-07-28 10:45:36
  * Author: 3urobeat
  *
- * Last Modified: 07.08.2023 19:29:30
+ * Last Modified: 2024-03-31 12:49:03
  * Modified By: 3urobeat
  *
- * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
+ * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.

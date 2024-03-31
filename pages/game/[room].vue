@@ -2,14 +2,14 @@
 /*
  * File: [room].vue
  * Project: bingo
- * Created Date: 27.07.2023 13:06:42
+ * Created Date: 2023-07-27 13:06:42
  * Author: 3urobeat
- * 
- * Last Modified: 08.08.2023 19:21:29
+ *
+ * Last Modified: 2024-03-31 12:50:32
  * Modified By: 3urobeat
- * 
- * Copyright (c) 2023 3urobeat <https://github.com/3urobeat>
- * 
+ *
+ * Copyright (c) 2023 - 2024 3urobeat <https://github.com/3urobeat>
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
@@ -82,7 +82,7 @@
                     <ul id="bingo-players-list" class="bingo-players-list rounded-lg mt-1 w-full outline outline-black outline-2">
                         <div class="ml-4 mr-4 pt-1 pb-1">
                             <li class="clearfix" v-for="thisname in names" :key="thisname">
-                                {{thisname.name}} 
+                                {{thisname.name}}
                                 <span class="relative float-right pl-4">
                                     <PhTrophy size="20px" v-if="names.filter((e) => e.name == thisname.name && e.hasWon).length > 0" class="float-left mr-4 mt-[1px] text-yellow-500"></PhTrophy>
                                     {{ thisname.strikesCount }}/{{ thisname.cardsCount }}
@@ -284,7 +284,7 @@
 
         // Update card ref with negated strike property
         const el = cards.value.find(e => e.id == id) as any;
-        
+
         el.strike = !el.strike;
 
         // Send updated playfield to the database
