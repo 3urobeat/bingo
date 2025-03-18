@@ -17,22 +17,22 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@nuxtjs/device": "^3.1.1",
-    "@types/node": "^22.1.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.1",
-    "@typescript-eslint/parser": "^8.0.1",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^9.8.0",
-    "eslint-plugin-jsdoc": "^48.11.0",
-    "nuxt": "^3.12.4",
-    "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.7",
-    "typescript": "^5.5.4"
+    "@nuxtjs/device": "^3.2.4",
+    "@types/node": "^22.13.10",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "@typescript-eslint/parser": "^8.26.1",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.22.0",
+    "eslint-plugin-jsdoc": "^50.6.8",
+    "nuxt": "^3.16.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.14",
+    "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@nuxtjs/tailwindcss": "^6.13.2",
     "@phosphor-icons/vue": "^2.2.1",
     "@seald-io/nedb": "^4.0.4",
-    "@vueuse/core": "^10.11.0"
+    "@vueuse/core": "^13.0.0"
   }
 }
